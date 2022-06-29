@@ -1,0 +1,232 @@
+<!-- Build monos. It is also used by Hudson monos project. JUnit test is available for this build. -->
+<project basedir="." default="addon" name="BUILD_monos">
+	<description>
+	    Build monos. 
+            Also used by Hudson monos project. 
+	    JUnit test is available for this build.
+	    $Id: build_monos.xml $
+	</description>
+
+	<!-- set global properties for this build -->
+	<property name="srcmonos" location="src" />
+	<property name="buildmonos" location="build" />
+	<property name="libmonos" location="lib" />
+	<property name="release_dir" value="release" />
+	<property name="distmonos" location="${buildmonos}/dist" />
+	<property name="beast2path" location="../beast2" />
+	<property name="libBeast2" location="${beast2path}/lib" />
+	<property name="srcBeast2" location="${beast2path}/src" />
+	<property name="beast2classpath" location="${beast2path}/build" />
+	<property name="Add_on_dir" value="${release_dir}/add-on" />
+	<property name="version" value="1.0.0" />
+	
+	<property name="buildAlmost" location="../AlmostDistributions/build"/>
+	<property name="buildMODEL_SELECTION" location="../model-selection/build"/>
+	<property name="buildBEAST_LABS" location="../BEASTLabs/build"/>
+	<property name="buildBabel" location="../Babel/build"/>
+
+
+    <import file="${beast2path}/build.xml" />
+
+	<property name="main_class_BEAST" value="beast.app.BeastMCMC" />
+	<property name="report" value="${buildmonos}/junitreport"/>
+
+	<path id="classpath">
+        <pathelement path="${buildmonos}"/>
+		<fileset dir="${libBeast2}" includes="antlr-runtime-4.7.jar"/>
+		<fileset dir="${libBeast2}" includes="junit-4.8.2.jar"/>
+		<fileset dir="${libBeast2}" includes="beagle.jar"/>
+        <fileset dir="${libBeast2}" includes="jam.jar"/>
+        <fileset dir="${libBeast2}" includes="ntlr-runtime-4.5.jar"/>
+        <fileset dir="${libBeast2}" includes="commons-math3-3.1.1.jar"/>
+        <fileset dir="${libBeast2}" includes="colt.jar"/>
+        <fileset dir="${libBeast2}" includes="debug-1.0.jar"/>
+        <pathelement path="${buildMODEL_SELECTION}"/>
+        <pathelement path="${buildBEAST_LABS}"/>
+        <pathelement path="${buildBabel}"/>
+        <pathelement path="${beast2classpath}"/>
+        <pathelement path="${buildAlmost}"/>        
+	</path>
+
+	<!-- start -->
+	<target name="initmonos">
+		<echo message="${ant.project.name}: ${ant.file}" />
+	</target>
+
+	<target name="cleanmonos">
+    	<delete dir="${buildmonos}" />
+	</target>
+
+	<!-- clean previous build, and then compile Java source code, and Juint test -->
+	<target name="build_all_monos" depends="cleanmonos,compile-allmonos,junitmonos"
+        description="Clean and Build all run-time stuff">
+	</target>
+
+	<!-- clean previous build, compile Java source code, and Junit test, and make the beast.jar and beauti.jar -->
+	<target name="build_jar_all_monos" depends="cleanmonos,compile-allmonos,junitmonos,dist_all_monos"
+        description="Clean and Build all run-time stuff">
+	</target>
+
+
+	<!-- No JUnit Test, clean previous build, compile Java source code, and make the monos.jar and beauti.jar -->
+	<target name="build_jar_all_monos_NoJUnitTest" depends="cleanmonos,compile-allmonos,dist_all_monos"
+        description="Clean and Build all run-time stuff">
+	</target>
+
+	<!-- compile Java source code -->
+	<target name="compile-allmonos" depends="initmonos,compile-all">
+
+
+	    <!-- Capture the path as a delimited property using the refid attribute -->
+	    <property name="myclasspath" refid="classpath"/>
+	    <!-- Emit the property to the ant console -->
+	    <echo message="Classpath = ${myclasspath}"/>
+
+		<mkdir dir="${buildmonos}" />
+
+		<!-- Compile the java code from ${srcmonos} into ${buildmonos} /bin -->
+		<javac srcdir="${srcmonos}" destdir="${buildmonos}" classpathref="classpath" 
+		       fork="true"
+		       memoryinitialsize="256m"
+		       memorymaximumsize="256m">
+			   <!--source="1.6"
+		       target="1.6"-->
+			<include name="monos/**/**" />
+			<!-- compile JUnit test classes -->
+			<include name="test/monos/**" />
+		</javac>
+		<echo message="Successfully compiled." />
+	</target>
+
+	<!-- make the beast.jar and beauti.jar -->
+	<target name="dist_all_monos" depends="compile-allmonos" description="create monos jar">
+		<!-- Create the distribution directory -->
+		<mkdir dir="${distmonos}" />
+
+		<!-- Put everything in ${buildmonos} into the beast.jar file -->
+		<jar jarfile="${distmonos}/monos.jar">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Main-Class" value="${main_class_BEAST}" />
+			</manifest>
+			<fileset dir="${buildmonos}">
+				<include name="**/*.class" />
+			</fileset>
+			<fileset dir="${buildMODEL_SELECTION}">
+				<include name="**/*.class" />
+			</fileset>
+			<fileset dir="${buildBEAST_LABS}">
+				<include name="**/*.class" />
+			</fileset>
+			<fileset dir="${buildBabel}">
+				<include name="**/*.class" />
+			</fileset>
+			<fileset dir="${beast2classpath}">
+				<include name="**/*.class" />
+				<include name="**/*.properties" />
+				<include name="**/*.png" />
+			</fileset>
+            <zipgroupfileset dir="${lib}" includes="jam.jar" />
+            <zipgroupfileset dir="${lib}" includes="beagle.jar" />
+            <zipgroupfileset dir="${lib}" includes="colt.jar" />
+            <zipgroupfileset dir="${lib}" includes="commons-math3-3.1.1.jar" />
+            <zipgroupfileset dir="${lib}" includes="antlr-runtime-4.7.jar"/>
+		</jar>
+		<jar jarfile="${distmonos}/monos.src.jar">
+			<fileset dir="${srcmonos}">
+				<include name="monos/**/*.java" />
+				<include name="monos/**/*.png" />
+			</fileset>
+        </jar>
+		<jar jarfile="${distmonos}/monos.addon.jar">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}" />
+			</manifest>
+			<fileset dir="${buildmonos}">
+				<include name="monos/**/*.class" />
+				<include name="**/*.properties" />
+			</fileset>
+		</jar>
+	</target>
+
+	<!-- run beast.jar -->
+	<target name="run_monos">
+		<java jar="${distmonos}/monos.jar" fork="true" />
+	</target>
+
+	
+	<!-- JUnit test -->
+	<target name="junitmonos">
+		<mkdir dir="${report}" />
+		<junit printsummary="yes"> <!--showoutput='yes'-->
+			<classpath>
+				<path refid="classpath" />
+				<path location="${buildmonos}" />
+			</classpath>
+
+			<formatter type="xml" />
+
+			<batchtest fork="yes" todir="${report}">
+				<fileset dir="${srcmonos}">
+                    <include name="test/**/*Test.java"/>                                         
+				</fileset>
+				<fileset dir="${srcBeast2}">
+                    <include name="test/beast/integration/**/*Test.java"/>                                         
+                    <exclude name="test/beast/integration/**/ResumeTest.java"/>                                         
+                    <exclude name="test/beast/integration/ExampleXmlParsingTest.java"/>                                         
+				</fileset>
+			</batchtest>
+		</junit>
+		<echo message="JUnit test finished." />
+	</target>
+    
+    <target name="junitreport">
+		<junitreport todir="${report}">
+			<fileset dir="${report}" includes="*.xml"/>
+			<report format="frames" todir="${report}"/>
+		</junitreport>
+		<echo message="JUnit test report finished." />
+	</target>
+
+
+	<target name="addon"
+	        depends="build_jar_all_monos_NoJUnitTest"
+	        description="release BEAST 2 add-on version of monos">
+
+		<delete dir="${Add_on_dir}" />
+		<!-- Create the release directory -->
+		<mkdir dir="${Add_on_dir}" />
+		<mkdir dir="${Add_on_dir}/lib" />
+		<mkdir dir="${Add_on_dir}/examples" />
+		<mkdir dir="${Add_on_dir}/templates" />
+
+		<copy todir="${Add_on_dir}">
+			<fileset file="version.xml"/>
+		</copy>
+		<!--
+		<copy todir="${Add_on_dir}/examples">
+			<fileset dir="examples" />
+		</copy>
+		-->
+		<copy todir="${Add_on_dir}/lib">
+			<fileset dir="${distmonos}" includes="monos.addon.jar" />
+		</copy>
+		<copy todir="${Add_on_dir}">
+			<fileset dir="${distmonos}" includes="monos.src.jar" />
+		</copy>
+		<!--
+		<copy todir="${Add_on_dir}/templates">
+			<fileset file="templates/monos.xml" />
+			<fileset file="templates/AutoPartition.xml" />
+		</copy>
+		-->
+
+		<jar jarfile="${distmonos}/monos.addon.v${version}.zip">
+			<fileset dir="${Add_on_dir}">
+				<include name="**/*" />
+			</fileset>
+        </jar>
+		<echo message="Add-on version v${version} release is finished." />
+	</target>
+
+</project>

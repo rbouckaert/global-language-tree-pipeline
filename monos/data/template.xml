@@ -1,0 +1,309 @@
+<beast beautitemplate="Standard" beautistatus="" namespace="beast.core:beast.evolution.alignment:beast.evolution.tree:beast.evolution.tree.coalescent:beast.evolution.speciation:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood" version="2.0">
+
+  <!-- shortcut names -->
+  <map name="Beta">beast.math.distributions.Beta</map>
+  <map name="OneOnX">beast.math.distributions.OneOnX</map>
+  <map name="Exponential">beast.math.distributions.Exponential</map>
+  <map name="Gamma">beast.math.distributions.Gamma</map>
+  <map name="LogNormal">beast.math.distributions.LogNormalDistributionModel</map>
+  <map name="Normal">beast.math.distributions.AlmostNormal</map>
+  <map name="Uniform">beast.math.distributions.Uniform</map>
+  <map name="AlmostUniform">beast.math.distributions.AlmostUniform</map>
+  <map name="prior">beast.math.distributions.Prior</map>
+
+  <map name="taxonset">beast.evolution.alignment.TaxonSet</map>
+  <map name="taxon">beast.evolution.alignment.Taxon</map>
+
+  <!-- Languages -->
+  
+%all-taxa%
+
+  <!-- One tree to rule the EDGE -->
+  <tree id="Tree.t:EDGE">
+    <taxonset idref="EDGE"/>
+  </tree>
+
+%taxon-sets%
+  
+	<tree initial="@Tree.t:EDGE" taxonset="@EDGE"
+	  spec="beast.evolution.tree.SimpleConstrainedRandomTreeA"
+	  weights="@geographyWeights"
+	  id="randomTree">
+      <constraints idref="constraints"/>
+	  <constraints idref="originate.constraints"/>
+	</tree>
+    
+  <!-- Yule birth rate -->
+  <parameter id="birthRate.t:EDGE" value="0.025"/>
+  
+  <input spec="beast.evolution.branchratemodel.UCRelaxedClockModel" id="branchRates" numberOfDiscreteRates="100" normalize="false">
+    <parameter name="clock.rate" id="ucld.mean" value="1.0"/>
+    
+    <distr id="gammaOneP" spec="beast.math.distributions.GammaOneP" >
+      <!-- uniform : effectivly the prior on S -->
+      <parameter name="shape" id="shape" value="1.0" lower="1e-2" upper="10"/>
+    </distr>
+    <parameter spec="beast.core.parameter.IntegerParameter" name="rateCategories" id="rateCategories" dimension="10" value="1" lower="0" upper="4"/>
+    
+    <tree idref="Tree.t:EDGE"/>
+  </input>
+  
+  <run chainLength="500000000" id="mcmc" preBurnin="0" sampleFromPrior="false" spec="MCMC" numInitializationAttempts="1">
+  <init idref="randomTree"/>
+
+  <state id="state" storeEvery="10000">
+      <stateNode idref="Tree.t:EDGE"/>
+      <stateNode idref="birthRate.t:EDGE"/>
+      <stateNode spec="parameter.RealParameter" id="precision.s:EDGECenters" minordimension="1" estimate="true" value="100" lower="1.0" upper="10000"/>
+      <stateNode spec="sphericalGeo.LocationParameter" id="location.geo" minordimension="2" estimate="true" value="0.0 0.0" lower="0.0"/>
+      <stateNode idref="shape"/>
+      <stateNode idref="rateCategories"/>
+      <stateNode spec="parameter.RealParameter" id="gamma" minordimension="1" estimate="true" value="1.4e-4" lower="0.0" upper="1"/>
+    </state>
+    
+    <distribution spec="CompoundDistribution" id="posterior">
+      	<distribution id="prior" spec="util.CompoundDistribution">
+%root_prior%
+	  		<distribution id="constraints" spec="beast.math.distributions.MultiMRCAPriors" isBinary="false" tree="@Tree.t:EDGE" newick="%glottologconstraints%">
+%MRCACalibrations%
+      		</distribution>
+
+
+	  		<distribution id="originate.constraints" spec="beast.math.distributions.MultiMRCAPriors" isBinary="false" tree="@Tree.t:EDGE" newick="">
+%originateCalibrations%
+      		</distribution>
+
+
+    <!-- Yule process prior -->
+	      	<distribution birthDiffRate="@birthRate.t:EDGE" id="YuleModel.t:EDGE" spec="MultiYuleModel" constraint="@constraints" gamma="@gamma">
+                <include idref="Americas.prior"/>
+                <include idref="Sahul.prior"/>
+                <include idref="RestOfWorld.originate.prior"/>
+%excluded_for_multiYule%
+
+<!--
+                  <exclude idref="Daghestanian.prior"/>
+-->                  
+          	</distribution>
+
+
+	  <!-- prior on birth rate -->
+		  <prior id="BirthRatePrior" name="distribution">
+          	 <x spec="beast.util.Script" expression="lambda[0]" argnames="lambda" x="@birthRate.t:EDGE"/>                
+             <Uniform name="distr" upper="0.025"/>
+		  </prior>
+		  <prior id="YuleBirthRatePrior.t:EDGE" name="distribution" x="@birthRate.t:EDGE">
+		     <AlmostUniform id="AlmostUniform.0" name="distr" lower="0.0" upper="2.0"/>
+		  </prior>
+	
+
+    	  <distribution id="globaleGeoPrior" spec="beast.geo.global.GlobalGeoPrior" likelihood="@geography"/>
+
+	      <prior id="precisionPrior.EDGECenters" x="@precision.s:EDGECenters" name="distribution">
+    	      <OneOnX id="AlmostUniform.1" name="distr"/><!-- lower="0" upper="1e10"/-->
+        	</prior>
+
+      </distribution>
+      
+      <distribution id="likelihood" spec="util.CompoundDistribution">
+      	<distribution id="geography" spec="sphericalGeo.ApproxMultivariateTraitLikelihoodF2" tree="@Tree.t:EDGE" scale="false" logAverage="true" location="@location.geo" longitudeThreshold="-30">
+          <multiGeoprior id="multiGeoPrior" spec="sphericalGeo.MultiGeoPrior" tree="@Tree.t:EDGE" newick="">
+            <geoprior id="rootLocationPrior" spec="sphericalGeo.GeoPrior" location="@location.geo" tree="@Tree.t:EDGE" taxonset="@EDGE">
+			    <region spec="sphericalGeo.region.KMLRegion" kml="./kml/Africa.kml"/>
+			</geoprior>
+
+			<geoprior id="rowLocationPrior" spec="sphericalGeo.GeoPrior" location="@location.geo" tree="@Tree.t:EDGE" taxonset="@RestOfWorld">
+                <region spec="sphericalGeo.region.KMLRegion" kml="./kml/SouthAsia.kml"/>
+            </geoprior>
+
+            <geoprior id="Americas.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Americas"/>
+            <geoprior id="Sahul.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Sahul"/>
+
+<geoprior id="Lower_Sepik-Ramu.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Lower_Sepik-Ramu"/>
+<geoprior id="Mayan.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Mayan"/>
+<geoprior id="Athabaskan-Eyak-Tlingit.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Athabaskan-Eyak-Tlingit"/>
+<geoprior id="Nakh-Daghestanian.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Nakh-Daghestanian"/>
+<geoprior id="Sepik.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Sepik"/>
+<geoprior id="Hmong-Mien.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Hmong-Mien"/>
+<geoprior id="Turkic.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Turkic"/>
+<geoprior id="Uralic.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Uralic"/>
+<geoprior id="Quechuan.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Quechuan"/>
+<geoprior id="Arawakan.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Arawakan"/>
+<geoprior id="Nilotic.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Nilotic"/>
+<geoprior id="Tupian.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Tupian"/>
+<geoprior id="Nuclear_Torricelli.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Nuclear_Torricelli"/>
+<geoprior id="Uto-Aztecan.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Uto-Aztecan"/>
+<geoprior id="Central_Sudanic.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Central_Sudanic"/>
+<geoprior id="Mande.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Mande"/>
+<geoprior id="Dravidian.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Dravidian"/>
+<geoprior id="Tai-Kadai.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Tai-Kadai"/>
+<geoprior id="Pama-Nyungan.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Pama-Nyungan"/>
+<geoprior id="Austroasiatic.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Austroasiatic"/>
+<geoprior id="Otomanguean.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Otomanguean"/>
+<geoprior id="Nuclear_Trans_New_Guinea.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Nuclear_Trans_New_Guinea"/>
+<geoprior id="Afro-Asiatic.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Afro-Asiatic"/>
+<geoprior id="Indo-European.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Indo-European"/>
+<geoprior id="Sino-Tibetan.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Sino-Tibetan"/>
+<geoprior id="Austronesian.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Austronesian"/>
+<geoprior id="Atlantic-Congo.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Atlantic-Congo"/>
+
+      </multiGeoprior>
+
+			  <data spec="sphericalGeo.AlignmentFromTraitMap" id="EDGE-data">
+	    		<userDataType spec="sphericalGeo.LocationDataType"/>
+			    <traitMap id="traitmap.s:EDGE" spec="sphericalGeo.TreeTraitMap" tree="@Tree.t:EDGE" traitName="location" randomizeupper="90 180" randomizelower="-90 -180" initByMean="true">
+%locations%
+					<parameter id="location.ALL" minordimension="2" value="0.0 0.0"/>
+	    		</traitMap>
+			  </data>
+	  
+			  <siteModel spec="SiteModel" id="geoContSiteModel.s:EDGECenters">
+	            <substModel id="diffusionModel.s:EDGECenters" spec="sphericalGeo.SphericalDiffusionModel" threshold="1.0" fast="true"><!-- biased="true"-->
+              		<precision idref="precision.s:EDGECenters"/>
+            	</substModel>
+        	  </siteModel>
+			  <branchRateModel idref="branchRates"/>
+        </distribution>
+
+
+      </distribution>
+    </distribution>
+
+    <operatorschedule spec="beast.core.OperatorSchedule" transform="sqrt"/>
+    
+    <operator id="birthRateScaler.t:EDGE" scaleFactor="0.5" spec="ScaleOperator" parameter="@birthRate.t:EDGE" weight="6.0"/>
+
+    <operator id="treeRootScaler.t:EDGE" rootOnly="true" scaleFactor="0.5" spec="ScaleOperator" tree="@Tree.t:EDGE" weight="6.0"/>
+
+    <operator id="UniformOperator.t:EDGE" spec="Uniform"
+	      tree="@Tree.t:EDGE" weight="80.0"/>
+
+    <operator id="SubtreeSlide.t:EDGE" spec="SubtreeSlide" tree="@Tree.t:EDGE" markclades="true" weight="80.0"/>
+    <operator id="resSTS" spec="RestrictedSubtreeSlide" tree="@Tree.t:EDGE" weight="30.0" clades="@constraints"  topLevelOnly="true" markclades="true"/> 
+    <operator id="narrow.t:EDGE" spec="Exchange" tree="@Tree.t:EDGE" markclades="true" weight="80.0"/>
+
+    <operator id="location.sampler" spec="sphericalGeo.LocationOperatorF" location="@location.geo" likelihood="@geography" weight="10"/>
+
+    <operator id="precisionScaler.s:EDGECenters" spec="ScaleOperator" parameter="@precision.s:EDGECenters" weight="50" scaleFactor="0.7"/>
+
+    <operator id="tree.t:Attach" spec="AttachOperator" tree="@Tree.t:EDGE" weight="300.0" tipsOnly="false" constraints="@constraints" markclades="true">
+      <weights id="geographyWeights" spec="sphericalGeo.CircleDistanceProvider" tree="@Tree.t:EDGE" data="@EDGE-data"/>
+     </operator>
+    
+    <operator id="SScaler" spec="ScaleOperator" scaleFactor="0.9"
+	      weight="2" parameter="@shape" upper=".95"/>
+    <operator id="categoriesRandomWalk" spec="IntRandomWalkOperator" windowSize="1" weight="20" parameter="@rateCategories"/>
+
+    <operator id="ExpCategoriesSwapOperator" spec="SwapOperator" howMany="1" weight="30" intparameter="@rateCategories"/>
+    <operator id="ExpCategoriesUniform" spec="UniformOperator" weight="20" parameter="@rateCategories"/>
+
+    <operator spec="UpDownOperator" scaleFactor="0.75" weight="10" upper="0.95">
+        <up idref="precision.s:EDGECenters"/>
+        <up idref="Tree.t:EDGE"/>
+        <down idref="birthRate.t:EDGE"/>
+     </operator>
+     
+<!--
+     <operator id="gammaScaler.t:EDGE" scaleFactor="0.5" spec="ScaleOperator" parameter="@gamma" weight="5"/>
+-->
+   
+    <logger id="screenlog" logEvery="100000">
+      <log idref="posterior"/>
+      <log arg="@posterior" id="ESS.0" spec="util.ESS"/>
+      <log idref="likelihood"/>
+      <log idref="gamma"/>
+      <log idref="prior"/>
+      <log idref="precision.s:EDGECenters"/>
+      <log idref="shape"/>
+      <log idref="rate.c:geo"/>
+    </logger>
+    
+    <logger fileName="EDGE6635.log" id="tracelog" logEvery="500000" model="@posterior" sanitiseHeaders="true" sort="smart">
+      <log idref="posterior"/>
+      <log idref="prior"/>
+      <log idref="likelihood"/>
+      <log idref="shape"/>
+      <log branchratemodel="@branchRates" id="rate.c:geo" spec="beast.evolution.branchratemodel.RateStatistic" tree="@Tree.t:EDGE"/>
+
+      <log id="TreeHeight.t:EDGE" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:EDGE"/>
+      <log idref="YuleModel.t:EDGE"/>
+      <log idref="birthRate.t:EDGE"/>
+      <log idref="geography"/>
+      <log idref="precision.s:EDGECenters"/>
+      <log idref="Americas.prior"/>
+      <log idref="Sahul.prior"/>
+      <log idref="RestOfWorld.originate.prior"/>
+        <!--
+            <log idref="Afro-Asiatic.geoprior"/>
+            <log idref="Algic.geoprior"/>
+            <log idref="Arawakan.geoprior"/>
+            <log idref="Athapaskan-Eyak-Tlingit.geoprior"/>
+            <log idref="Atlantic-Congo.geoprior"/>
+            <log idref="Austronesian.geoprior"/>
+            <log idref="Cariban.geoprior"/>
+            <log idref="Central_Sudanic.geoprior"/>
+            <log idref="Dravidian.geoprior"/>
+            <log idref="Indo-European.geoprior"/>
+            <log idref="Mande.geoprior"/>
+            <log idref="Mayan.geoprior"/>
+            <log idref="Nilotic.geoprior"/>
+            <log idref="Nuclear_Trans_New_Guinea.geoprior"/>
+            <log idref="Pama-Nyungan.geoprior"/>
+            <log idref="Sino-Tibetan.geoprior"/>
+            <log idref="Tupian.geoprior"/>
+            <log idref="Turkic.geoprior"/>
+            <log idref="Uralic.geoprior"/>
+            <log idref="Uto-Aztecan.geoprior"/>
+            -->
+	<log idref="YuleBirthRatePrior.t:EDGE"/>
+	<log idref="rootLocationPrior"/>
+	<log idref="constraints"/>
+	<log idref="multiGeoPrior"/>
+		
+        <!-- <log id="Americas.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Americas.taxa"/> -->
+        <!-- <log id="Sahul.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Sahul.taxa"/> -->
+        <!-- <log id="Afro-Asiatic.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Afro-Asiatic.taxa"/> -->
+        <!-- <log id="Algic.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Algic.taxa"/> -->
+        <!-- <log id="Arawakan.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Arawakan.taxa"/> -->
+        <!-- <log id="Athapaskan-Eyak-Tlingit.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Athapaskan-Eyak-Tlingit.taxa"/> -->
+        <!-- <log id="Atlantic-Congo.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Atlantic-Congo.taxa"/> -->
+        <!-- <log id="Austroasiatic.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Austroasiatic.taxa"/> -->
+        <!-- <log id="Austronesian.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Austronesian.taxa"/> -->
+        <!-- <log id="Cariban.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Cariban.taxa"/> -->
+        <!-- <log id="Central_Sudanic.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Central_Sudanic.taxa"/> -->
+        <!-- <log id="Dravidian.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Dravidian.taxa"/> -->
+        <!-- <log id="Indo-European.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Indo-European.taxa"/> -->
+        <!-- <log id="Japonic.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Japonic.taxa"/> -->
+        <!-- <log id="Mande.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Mande.taxa"/> -->
+        <!-- <log id="Mayan.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Mayan.taxa"/> -->
+        <!-- <log id="Nilotic.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Nilotic.taxa"/> -->
+        <!-- <log id="Nuclear_Trans_New_Guinea.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Nuclear_Trans_New_Guinea.taxa"/> -->
+        <!-- <log id="Otomanguean.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Otomanguean.taxa"/> -->
+        <!-- <log id="Pama-Nyungan.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Pama-Nyungan.taxa"/> -->
+        <!-- <log id="Panoan.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Panoan.taxa"/> -->
+        <!-- <log id="Sino-Tibetan.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Sino-Tibetan.taxa"/> -->
+        <!-- <log id="Tupian.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Tupian.taxa"/> -->
+        <!-- <log id="Turkic.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Turkic.taxa"/> -->
+        <!-- <log id="Uralic.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Uralic.taxa"/> -->
+        <!-- <log id="Uto-Aztecan.geoprior" spec="sphericalGeo.GeoPrior" tree="@Tree.t:EDGE" location="@location.geo" taxonset="@Uto-Aztecan.taxa"/> -->
+
+    </logger>
+
+   <logger fileName="EDGE6635.trees" id="treelog.t:EDGE" logEvery="500000" mode="tree">
+      <log id="TreeWithMetaDataLogger.t:EDGE" spec="beast.evolution.tree.TreeWithMetaDataLogger" tree="@Tree.t:EDGE"><metadata id="location" spec="sphericalGeo.TraitFunction" likelihood="@geography" value="0.0"/>	
+      <branchratemodel idref="branchRates"/>
+      </log>
+    </logger>
+
+    <!-- <logger fileName="debug.log" id="dtracelog" logEvery="100" model="@posterior" sanitiseHeaders="true" sort="smart"> -->
+    <!--   <log idref="posterior"/> -->
+    <!--   <log idref="prior"/> -->
+    <!--   <log idref="likelihood"/> -->
+    <!--   <log idref="precision.s:EDGECenters"/> -->
+    <!--   <log idref="shape"/> -->
+    <!--   <log idref="constraints"/> -->
+    <!--   <log idref="extra-constraints"/> -->
+    <!-- </logger> -->
+    
+  </run>
+</beast>

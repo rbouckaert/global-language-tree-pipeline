@@ -1,0 +1,16 @@
+<package name='monos' version='1.0.0'>
+	<depends on='beast2' atleast='2.6.6'/>
+	<depends on='BEASTLabs' atleast='1.9.6'/>
+	<depends on='Babel' atleast='0.3.2'/>
+	
+    <packageapp description="GenerateLexicalConstraints"
+              class="monos.GenerateLexicalConstraints"
+              args=""
+            />
+
+    <packageapp description="EdgeXMLGenerator"
+              class="monos.EdgeXMLGenerator"
+              args=""
+            />
+
+</package>

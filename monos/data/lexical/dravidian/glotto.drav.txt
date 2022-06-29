@@ -1,0 +1,21 @@
+glottocode	taxon
+brah1256	Brahui
+saur1249	Malto
+kuru1302	Kurukh
+pott1240	Ollari Gadba
+duru1236	Parji
+nort2699	Kolami
+kuvi1243	Kuwi
+nort2702	Gondi
+koya1251	Koya
+telu1262	Telugu
+tami1289	Tamil
+mala1464	Malayalam
+nucl1305	Kannada
+koda1255	Kodava
+tulu1258	Tulu
+ravu1237	Yeruva
+toda1252	Toda
+kota1263	Kota
+bada1257	Badaga
+bett1235	Betta Kurumba
