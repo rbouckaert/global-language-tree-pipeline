@@ -31,10 +31,9 @@ Reset the class path for BEAST (start BEAUti, select menu `File/Clear class path
 
 Use the `applauncher` utility that comes with BEAST with the `GenerateLexicalConstraints` argument. For examples from within the monos data directory:
 
-'applauncher GenerateLexicalConstraints -glottologTree dplace/iso.tree -xml dplace/geo-rc1197+almostnewwals+corrcals4.xml -treeID Tree.t:DPLACE -treeConfig treeset.cfg -burnin 10 -out /tmp/dplace.xml'
+'applauncher GenerateLexicalConstraints -glottologTree data/lexical/all-glotto.tree -xml input.xml -treeID Tree.t:EDGE -treeConfig data/lexical/treeset-glotto-hand-corrected.cfg -burnin 10 -threshold 0.5 -languageExclusions data/languageExclusions.dat -out /tmp/output.xml'
 
-For dplace, the data (including configuration files) can be downloaded [here](https://github.com/rbouckaert/monos/releases/download/v0.0.1/monos-data.tgz).
-
+The data directory contains configuration files for the global language tree.
 
 `GenerateLexicalConstraints` has the following options:
 
@@ -45,10 +44,11 @@ For dplace, the data (including configuration files) can be downloaded [here](ht
 * burnin [integer]	percentage of trees to used as burn-in (and will be ignored)
 * out 	output file. Print to stdout if not specified
 * threshold [double]	threshold above which clade support in lexical analyses is deemed high enough to justify adding a monophyly constraint in the pruned tree.
+* languageExclusions [file] text file with GlottoLog codes of languages that should not be included in the analysis.
 
 ## How to run XMLs
 
-The XMLs require BEAST 2.6 to be installed with the AlmostDistributions and GEO_SPHERE packages. 
+The XMLs require BEAST 2.6 to be installed with the AlmostDistributions, Babel, BEASTLabs and GEO_SPHERE packages. 
 The GEO_SPHERE package is in the default package repository it is easiest to start BEAUti (a program that is part of BEAST), and select the menu File/Manage packages. A package manager dialog pops up where you can select the GEO_SPHERE package and click the Install/Upgrade button. The BEASTLabs package should be automatically installed as well.
 
 If the AlmostDistributions package is listed as well, just click on it to select it, and hit the Install/Upgrade button. If the AlmostDistributions package is not listed, you may need to add a package repository by clicking the "Package repositories" button. A window pops up where you can click "Add URL" and add "https://raw.githubusercontent.com/CompEvol/CBAN/master/packages-extra.xml" in the entry. The AlmostDistributions package should now be listed in the package manager dialog.
