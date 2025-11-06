@@ -1,8 +1,7 @@
 # Global language tree pipeline
 
 This repository contains the code and data used in the paper
-
-Global language diversification is linked to socio-ecology and threat status, 2022
+Bouckaert, R., Redding, D., Sheehan, O., Kyritsis, T., Gray, R., Jones, K. E., & Atkinson, Q. (2022) Global language diversification is linked to socio-ecology and threat status. SocArXiv. https://doi.org/10.31235/osf.io/f8tr6 
 
 ## Monos package
 
