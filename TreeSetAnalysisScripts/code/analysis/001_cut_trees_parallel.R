@@ -7,7 +7,7 @@
 # and taxonomic groups and summarises tree level statistics on each sub tree
 
 # Input data:
-# - input_data/edge6636-March-2023-no-metadata.trees [Nexus file containing posterior trees]
+# - input_data/global-language-trees-6636-taxa.trees [Nexus file containing posterior trees]
 # - input_data/languages_and_dialects_geoFINALupdates6.csv [CSV file containing language metadata]
 # - input_data/top27families.csv [CSV file containing top 27 families]
 # - input_data/Lexicongraphic_familes.csv [CSV file containing lexicon families]  
@@ -42,7 +42,7 @@ for (dir in c("edscores", "all_trees", "summary", "outputs", "outputs/in_text_da
 }
 
 # read in all the trees
-tt <- read.nexus(here("input_data", "edge6636-March-2023-no-metadata.trees"))
+tt <- read.nexus(here("input_data", "global-language-trees-6636-taxa.trees"))
 
 # read in family and macroareas
 res5 <- fread(file = here("input_data",

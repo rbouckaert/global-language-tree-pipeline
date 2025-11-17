@@ -1,6 +1,6 @@
 # -------------------------------------------------------------------------
 # Input data:
-# - input_data/edge6636-March-2023-no-metadata.trees [Nexus: Source trees]
+# - input_data/global-language-trees-6636-taxa.trees [Nexus: Source trees]
 #
 # Output data:
 # - outputs/new_trees_sliced/ [Directory: clade counts per time slice]
@@ -24,7 +24,7 @@ library(phytools)
 # 1) Load Trees from Nexus File -------------------------------------------
 
 # Define the path to the Nexus file
-trees_file <- here("input_data", "edge6636-March-2023-no-metadata.trees")
+trees_file <- here("input_data", "global-language-trees-6636-taxa.trees")
 
 # Read all trees from the Nexus file
 cat("Reading trees from file:", trees_file, "\n")

@@ -25,7 +25,7 @@ Code authored by David Redding and Artur Trebski unless noted otherwise below.
 ### Credits and sourcing
 
 -   EDGE2 functionality is provided via the implementation by Ricky Gumbs, used here with attribution (Gumbs et al. 2022).
--   Threat data (`res5.csv` / `res5.r`) are derived from Bromham et al. (2021) *Nat Ecol Evol* doi:10.1038/s41559-021-01604-y.
+-   Threat data (`res5.csv` / `res5.r`) are derived from Bromham et al. (2022) *Nat Ecol Evol* doi:10.1038/s41559-021-01604-y.
 
 ### Folders:
 

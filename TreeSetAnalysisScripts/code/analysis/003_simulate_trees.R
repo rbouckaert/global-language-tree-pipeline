@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------#
 #                              Tree Simulations               ----
 # Input data:
-# - input_data/edge6636-March-2023-no-metadata.trees [Nexus: Source trees for simulation]
+# - input_data/global-language-trees-6636-taxa.trees [Nexus: Source trees for simulation]
 # - input_data/groups_data1.csv [CSV: Group names for simulations]
 # - all_trees/ [Directory: Trees for each group, used as templates]
 
