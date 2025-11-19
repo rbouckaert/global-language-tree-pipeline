@@ -8,24 +8,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import beast.app.beauti.BeautiDoc;
-import beast.app.treeannotator.TreeAnnotator;
-import beast.app.treeannotator.TreeAnnotator.MemoryFriendlyTreeSet;
-import beast.app.util.Application;
-import beast.core.BEASTInterface;
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.Logger;
-import beast.core.Runnable;
-import beast.core.Input.Validate;
-import beast.core.util.CompoundDistribution;
-import beast.core.util.Log;
-import beast.evolution.alignment.TaxonSet;
-import beast.evolution.tree.CladeSet;
-import beast.evolution.tree.Tree;
-import beast.math.distributions.AlmostMRCAPrior;
-import beast.math.distributions.AlmostMultiMRCAPriors;
-import beast.math.distributions.MRCAPrior;
+import beastfx.app.inputeditor.BeautiDoc;
+import beastfx.app.treeannotator.TreeAnnotator;
+import beastfx.app.treeannotator.TreeAnnotator.MemoryFriendlyTreeSet;
+import beastfx.app.tools.Application;
+import beast.base.core.BEASTInterface;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.inference.Logger;
+import beast.base.inference.Runnable;
+import beast.base.core.Input.Validate;
+import beast.base.inference.CompoundDistribution;
+import beast.base.core.Log;
+import beast.base.evolution.alignment.TaxonSet;
+import beast.base.evolution.tree.CladeSet;
+import beast.base.evolution.tree.Tree;
+import almostbeast.math.distributions.AlmostMRCAPrior;
+import almostbeast.math.distributions.AlmostMultiMRCAPriors;
+import beast.base.evolution.tree.MRCAPrior;
 
 @Description("test whether the trees in the treeConfig file used for GenerateLexicalConstraints can be parsed, "
 		+ "without going through the complete GenerateLexicalConstraints process")

@@ -376,7 +376,7 @@ tuva1244	Tuvalu
 ubir1237	Ubir
 ujir1237	UjirNAru
 urav1235	Ura
-west2516	UveaEast
+wall1257	UveaEast
 west2516	UveaWest
 pile1238	VaeakauTaumako
 vagh1249	VaghuaChoiseul

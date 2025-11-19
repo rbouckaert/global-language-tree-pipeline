@@ -9,32 +9,39 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-import beast.app.beauti.BeautiDoc;
-import beast.app.treeannotator.TreeAnnotator;
-import beast.app.treeannotator.TreeAnnotator.MemoryFriendlyTreeSet;
-import beast.app.util.*;
-import beast.core.*;
-import beast.core.Input.Validate;
-import beast.core.Runnable;
-import beast.core.util.CompoundDistribution;
-import beast.core.util.Log;
-import beast.evolution.alignment.*;
-import beast.evolution.tree.CladeSet;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.PrunedTree;
-import beast.evolution.tree.Tree;
-import beast.math.distributions.AlmostMRCAPrior;
-import beast.math.distributions.AlmostMultiMRCAPriors;
-import beast.math.distributions.MRCAPrior;
-import beast.math.distributions.Normal;
-import beast.util.TreeParser;
-import beast.util.XMLParser;
-import beast.util.XMLParserException;
-import beast.util.XMLProducer;
+import beastfx.app.inputeditor.BeautiDoc;
+import beastfx.app.tools.Application;
+import beastfx.app.treeannotator.TreeAnnotator;
+import beastfx.app.treeannotator.TreeAnnotator.MemoryFriendlyTreeSet;
+import beastfx.app.util.OutFile;
+import beastfx.app.util.TreeFile;
+import beastfx.app.util.XMLFile;
+import beast.base.core.BEASTInterface;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
+import beast.base.inference.CompoundDistribution;
+import beast.base.inference.Logger;
+import beast.base.inference.MCMC;
+import beast.base.core.Log;
+import beast.base.evolution.alignment.Taxon;
+import beast.base.evolution.alignment.TaxonSet;
+import beast.base.evolution.tree.CladeSet;
+import beast.base.evolution.tree.Node;
+import beastlabs.evolution.tree.PrunedTree;
+import beast.base.evolution.tree.Tree;
+import almostbeast.math.distributions.AlmostMRCAPrior;
+import almostbeast.math.distributions.AlmostMultiMRCAPriors;
+import beast.base.evolution.tree.MRCAPrior;
+import beast.base.inference.distribution.Normal;
+import beast.base.evolution.tree.TreeParser;
+import beast.base.parser.XMLParser;
+import beast.base.parser.XMLParserException;
+import beast.base.parser.XMLProducer;
 
 @Description("java implementation of the monos package -- add lexical constraints to XML based on "
 		+ "lexical analysis (if compatible with glottolog constraints)")
-public class GenerateLexicalConstraints extends Runnable {
+public class GenerateLexicalConstraints extends beast.base.inference.Runnable {
 	final public Input<TreeFile> glottologTreeInput = new Input<>("glottologTree", 
 			"Newick file containing the monophyletic constraints from Glottolog", Validate.REQUIRED);
 

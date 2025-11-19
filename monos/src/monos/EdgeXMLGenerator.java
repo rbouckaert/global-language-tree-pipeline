@@ -3,28 +3,28 @@ package monos;
 import java.io.*;
 import java.util.*;
 
-import beast.app.beauti.BeautiDoc;
-import beast.app.util.Application;
-import beast.app.util.OutFile;
-import beast.app.util.XMLFile;
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.util.Log;
-import beast.evolution.alignment.Taxon;
-import beast.evolution.alignment.TaxonSet;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
-import beast.math.distributions.Exponential;
-import beast.math.distributions.LogNormalDistributionModel;
-import beast.math.distributions.MRCAPrior;
-import beast.math.distributions.Normal;
-import beast.math.distributions.ParametricDistribution;
-import beast.math.distributions.Uniform;
-import beast.util.NexusParser;
-import beast.util.TreeParser;
+import beastfx.app.inputeditor.BeautiDoc;
+import beastfx.app.tools.Application;
+import beastfx.app.util.OutFile;
+import beastfx.app.util.XMLFile;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.core.Log;
+import beast.base.evolution.alignment.Taxon;
+import beast.base.evolution.alignment.TaxonSet;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
+import beast.base.inference.distribution.Exponential;
+import beast.base.inference.distribution.LogNormalDistributionModel;
+import beast.base.evolution.tree.MRCAPrior;
+import beast.base.inference.distribution.Normal;
+import beast.base.inference.distribution.ParametricDistribution;
+import beast.base.inference.distribution.Uniform;
+import beast.base.parser.NexusParser;
+import beast.base.evolution.tree.TreeParser;
 
 @Description("For getting information from the  GlottoLog newick tree file and produce edge.xml")
-public class EdgeXMLGenerator extends beast.core.Runnable {
+public class EdgeXMLGenerator extends beast.base.inference.Runnable {
 	final public Input<File> treeFileInput = new Input<>("glottologtree", "file containins glottolog newick tree file", new File("data/tree_glottolog_newick.txt"));
 	final public Input<File> familyExclusionsInput = new Input<>("familyExclusions", "text file with GlottoLog codes of families that should not be included in the analysis (e.g., sign languages)", new File("data/familyExclusions.csv"));
 	final public Input<File> languageExclusionsInput = new Input<>("languageExclusions", "text file with GlottoLog codes of languages that should not be included in the analysis", new File("data/languageExclusions.dat"));
@@ -241,7 +241,7 @@ public class EdgeXMLGenerator extends beast.core.Runnable {
 			if ((p.taxonsetInput.get().getID().equals("EDGE") && rootOnly) || 
 				(!p.taxonsetInput.get().getID().equals("EDGE") && !rootOnly)){
 				String id = p.taxonsetInput.get().getID();
-		        b.append("<distribution id=\"" + id + (useOriginate ? ".originate" : "") +".prior\" spec=\"beast.math.distributions.MRCAPrior\" monophyletic=\"true\" tree=\"@Tree.t:EDGE\""
+		        b.append("<distribution id=\"" + id + (useOriginate ? ".originate" : "") +".prior\" spec=\"beast.base.evolution.tree.MRCAPrior\" monophyletic=\"true\" tree=\"@Tree.t:EDGE\""
 		        		+ (useOriginate ? " useOriginate=\"true\" " : "")
 		        		+ ">\n"); 
 		        b.append("<taxonset idref=\""+id+"\"/>\n");
@@ -250,13 +250,13 @@ public class EdgeXMLGenerator extends beast.core.Runnable {
 		        	if (distr instanceof Normal) {
 		        		Normal ln = (Normal) distr;
 		    	        b.append("<Normal name=\"distr\" "
-		    	        		+ "mean=\"" + ln.meanInput.get().getValue() + "\" "
-		    	        		+ "sigma=\"" + ln.sigmaInput.get().getValue() + "\"/>\n");
+		    	        		+ "mean=\"" + ln.meanInput.get().getArrayValue() + "\" "
+		    	        		+ "sigma=\"" + ln.sigmaInput.get().getArrayValue() + "\"/>\n");
 		        	} else if (distr instanceof LogNormalDistributionModel) {
 		        		LogNormalDistributionModel ln = (LogNormalDistributionModel) distr;
 		    	        b.append("<LogNormal name=\"distr\" meanInRealSpace=\"" + ln.hasMeanInRealSpaceInput.get() + "\" "
-		    	        		+ "M=\"" + ln.MParameterInput.get().getValue() + "\" "
-		    	        		+ "S=\"" + ln.SParameterInput.get().getValue() + "\"/>\n");
+		    	        		+ "M=\"" + ln.MParameterInput.get().getArrayValue() + "\" "
+		    	        		+ "S=\"" + ln.SParameterInput.get().getArrayValue() + "\"/>\n");
 		        		
 		        	} else if (distr instanceof Uniform) {
 		        		Uniform ln = (Uniform) distr;
@@ -266,7 +266,7 @@ public class EdgeXMLGenerator extends beast.core.Runnable {
 		        	} else if (distr instanceof Exponential) {
 		        		Exponential ln = (Exponential) distr;
 		    	        b.append("<Exponential name=\"distr\" "
-		    	        		+ "mean=\"" + ln.lambdaInput.get().getValue() + "\"/>\n");
+		    	        		+ "mean=\"" + ln.lambdaInput.get().getArrayValue() + "\"/>\n");
 		        	}
 		        }
 		        b.append("</distribution>\n");
