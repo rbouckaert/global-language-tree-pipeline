@@ -1,4 +1,5 @@
 source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+figs1_dir <- ts_dir_create("outputs", "figures", "Fig_S1")
 
   ################################################################################
   # Figure S1: Language Family Diversification Rates, Imbalance, and Gamma
@@ -103,7 +104,7 @@ source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
   combined_plot <- grid.arrange(bal1, gamma1, nrow=1)
 
   # Save the combined plot
-  ggsave(filename = ts_here("outputs","Fig_S1" ,"Fig_S1.pdf"), 
+  ggsave(filename = file.path(figs1_dir ,"Fig_S1.pdf"), 
         plot = combined_plot, 
         height = 5, 
         width = 12)

@@ -1,4 +1,5 @@
 source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+fig4_dir <- ts_dir_create("outputs", "figures", "Fig_4")
 
 # List of files and folders read or loaded in this script:
 # 1. langa.shp file in the input_data/langa folder
@@ -230,10 +231,10 @@ final_plot <- ggdraw() +
 print(final_plot)
 
 # Save final plot
-ggsave(file = ts_here("outputs","Fig_4", "Fig4_15Oct2025.pdf"), 
+ggsave(file = file.path(fig4_dir, "Fig_4.pdf"), 
        plot = final_plot, width = 8, height = 4.5, dpi = 1000)
 
-ggsave(file = ts_here("outputs","Fig_4", "Fig4_15Oct2025.jpg"), 
+ggsave(file = file.path(fig4_dir, "Fig_4.jpg"), 
        plot = final_plot, width = 8, height = 4.5, dpi = 1000)
 
 
@@ -291,7 +292,7 @@ results <- tree_models %>%
 
 
 write.csv(results, ts_here("outputs","EDGE", "ThreatStatus_vs_LogED.csv"), row.names = FALSE)
-write.csv(results, ts_here("outputs","Fig_4", "ThreatStatus_vs_LogED.csv"), row.names = FALSE)
+write.csv(results, file.path(fig4_dir, "ThreatStatus_vs_LogED.csv"), row.names = FALSE)
 
 mean(results$unstd_coef)
 mean(results$std_coef)

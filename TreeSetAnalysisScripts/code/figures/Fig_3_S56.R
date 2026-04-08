@@ -1,4 +1,7 @@
 source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+fig3_dir <- ts_dir_create("outputs", "figures", "Fig_3")
+figs5_dir <- ts_dir_create("outputs", "figures", "Fig_S5")
+figs6_dir <- ts_dir_create("outputs", "figures", "Fig_S6")
 
 # Code to create results and plots for Fig3 and FigS5/S6
 
@@ -92,8 +95,8 @@ p5 <- ggplot(DR1,  # Use the full dataset, not just the subset
 
 print(p5)
 
-ggsave(ts_here("outputs","Fig_S5", "Fig_S5_new.png"), p5, height=3, width=8, dpi = 600)
-ggsave(ts_here("outputs","Fig_S5", "Fig_S5_new.pdf"), p5, height=3, width=8, dpi = 600)
+ggsave(file.path(figs5_dir, "Fig_S5_new.png"), p5, height=3, width=8, dpi = 600)
+ggsave(file.path(figs5_dir, "Fig_S5_new.pdf"), p5, height=3, width=8, dpi = 600)
 
 # Leave-one-out ridges ---------------------------------------------------------
 DR1$location <- factor(DR1$location, levels = c("Global","Africa", "America","Eurasia", "Oceania"))
@@ -118,7 +121,7 @@ p5r = ggplot(DR1[DR1$Parameters==0 & DR1$variable!="Endogamous Marriage",],
 
 print(p5r)
 
-ggsave(ts_here("outputs","Fig_S5", "Fig_S5_ridges.png"), p5r, height=3, width=8, dpi = 600)
+ggsave(file.path(figs5_dir, "Fig_S5_ridges.png"), p5r, height=3, width=8, dpi = 600)
 
 # Fig 3 Main --------------------------------------------------------------------
 # Load BISSE plots data
@@ -136,8 +139,8 @@ p3 = ggplot(data=bisp_long6[bisp_long6$Parameter!="Constant Rate" & bisp_long6$l
   theme(legend.position = c(0.77, 0.875))
 
 # Save PNG and PDF
-ggsave(p3, filename = ts_here("outputs","Fig_3", "Fig_3.pdf"), width = 5, height = 3.5, dpi = 1000)
-ggsave(p3, filename = ts_here("outputs","Fig_3", "Fig_3.png"), width = 5, height = 3.5, dpi = 1000)
+ggsave(p3, filename = file.path(fig3_dir, "Fig_3.pdf"), width = 5, height = 3.5, dpi = 1000)
+ggsave(p3, filename = file.path(fig3_dir, "Fig_3.png"), width = 5, height = 3.5, dpi = 1000)
 
 # Fig S6 Supplementary --------------------------------------------------------------------
 # Plot results of bisse
@@ -153,5 +156,5 @@ p6 = ggplot(data=bisp_long6[bisp_long6$Parameter!="Constant Rate" & bisp_long6$l
   theme(legend.position = c(0.85, 0.94))
 
 # Save PNG and PDF
-ggsave(p6, filename = ts_here("outputs","Fig_S6", "Fig_S6_square.png"), width = 10, height = 10, dpi = 600)
-ggsave(p6, filename = ts_here("outputs","Fig_S6", "Fig_S6_narrow.pdf"), width = 5, height = 20, dpi = 600)
+ggsave(p6, filename = file.path(figs6_dir, "Fig_S6_square.png"), width = 10, height = 10, dpi = 600)
+ggsave(p6, filename = file.path(figs6_dir, "Fig_S6_narrow.pdf"), width = 5, height = 20, dpi = 600)

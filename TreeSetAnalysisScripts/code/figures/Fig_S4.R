@@ -1,4 +1,5 @@
 source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+figs4_dir <- ts_dir_create("outputs", "figures", "Fig_S4")
 
 # -----------------------------------------------------------------------------|
 
@@ -238,10 +239,10 @@ dists <- ggplot(
         legend.margin = margin(10,0,0,0))
 
 plot(dists)
-ggsave(ts_here("outputs", "Fig_S4", "FigS4_4250_fixed_20Sep2025.png"), plot = dists,
+ggsave(file.path(figs4_dir, "Fig_S4.png"), plot = dists,
        width = 5.5, height = 6, units = "in", dpi = 600,
        scale = 1.1)
 
-ggsave(ts_here("outputs", "Fig_S4", "FigS4_4250_fixed_20Sep2025.pdf"), plot = dists,
+ggsave(file.path(figs4_dir, "Fig_S4.pdf"), plot = dists,
        width = 5.5, height = 6, units = "in", dpi = 600,
        scale = 1.1)

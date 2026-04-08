@@ -1,4 +1,5 @@
 source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+figs2_dir <- ts_dir_create("outputs", "figures", "Fig_S2")
 
 library(here)
 library(ggplot2)
@@ -46,7 +47,7 @@ p = ggplot(fil3[fil3$group2=="top27families",],
 
 # Save the plot as a high-quality PNG
 ggsave(
-  filename = ts_here("outputs","Fig_S2","Fig_S2.png"), 
+  filename = file.path(figs2_dir, "Fig_S2.png"), 
   plot = p,
   width = 12, 
   height = 8, 
@@ -56,7 +57,7 @@ ggsave(
 
 # Save the plot as a high-quality PDF
 ggsave(
-  filename = ts_here("outputs","Fig_S2","Fig_S2.pdf" ), 
+  filename = file.path(figs2_dir, "Fig_S2.pdf" ), 
   plot = p,
   width = 12,           
   height = 8, 
@@ -95,7 +96,7 @@ print(p2)
 
 # Save the plot as a high-quality PNG
 ggsave(
-  filename = ts_here("outputs","Fig_S2","Fig_S2_viridis.png"), 
+  filename = file.path(figs2_dir, "Fig_S2_viridis.png"), 
   plot = p2,
   width = 12, 
   height = 8, 
@@ -105,7 +106,7 @@ ggsave(
 
 # Save the plot as a high-quality PNG
 ggsave(
-  filename = ts_here("outputs","Fig_S2","Fig_S2_viridis.pdf"), 
+  filename = file.path(figs2_dir, "Fig_S2_viridis.pdf"), 
   plot = p2,
   width = 12, 
   height = 8, 

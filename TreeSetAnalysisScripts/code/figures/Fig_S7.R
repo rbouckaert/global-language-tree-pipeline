@@ -310,11 +310,10 @@ for (cell_size in c(200000, 250000, 300000, 400000)){
     
     # Save outputHow 
     ggsave(
-      ts_here("outputs", "Fig_S7_equalcells","8April_Quantiles_WithoutMinMax",
+      file.path(figs7_equalcells_dir,
            paste0("Map_",aggregation,"_per_language_",cell_aggregation,"_per_cell_",
                   format(cell_size, scientific = FALSE),".jpg")), 
       final_plot, width = 9, height = 7.5, units = "in", dpi = 300 #original width was 10, height 8
     )
   }
 #}
-

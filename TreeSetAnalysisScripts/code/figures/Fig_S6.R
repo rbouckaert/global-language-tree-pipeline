@@ -1,4 +1,6 @@
 source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+figs5_dir <- ts_dir_create("outputs", "figures", "Fig_S5")
+figs6_dir <- ts_dir_create("outputs", "figures", "Fig_S6")
 
 # Code to create results and plots for BISSE analyses/Extended Data Fig. 6
 
@@ -56,7 +58,7 @@ p1 = ggplot(DR1[DR1$Parameters==0 & DR1$variable!="Endogamous Marriage",],
 
 print(p1)
 
-ggsave(ts_here("outputs","Fig_S5", "Fig_S5_ridges.png"), p1, height=3, width=8, dpi = 600)
+ggsave(file.path(figs5_dir, "Fig_S5_ridges.png"), p1, height=3, width=8, dpi = 600)
 
 # Figure S6 --------------------------------------------------------------------
 # Updated code for faceted ridges
@@ -86,8 +88,8 @@ p5 <- ggplot(DR1,  # Use the full dataset, not just the subset
 
 print(p5)
 
-ggsave(ts_here("outputs", "Fig_S6.png"), p5, height=3, width=8, dpi = 600)
-ggsave(ts_here("outputs", "Fig_S6.pdf"), p5, height=3, width=8, dpi = 600)
+ggsave(file.path(figs6_dir, "Fig_S6.png"), p5, height=3, width=8, dpi = 600)
+ggsave(file.path(figs6_dir, "Fig_S6.pdf"), p5, height=3, width=8, dpi = 600)
 
 # Continue Data Curation --------------------------------------------------
 # Results table
@@ -237,8 +239,8 @@ p6 = ggplot(data=bisp_long6[bisp_long6$Parameter!="Constant Rate" & bisp_long6$l
 
 print(p6)
 
-ggsave(p6, filename = ts_here("outputs", "Fig_S6_square.png"), width = 10, height = 10, dpi = 600)
-ggsave(p6, filename = ts_here("outputs", "Fig_S6_narrow.pdf"), width = 5, height = 20, dpi = 600)
+ggsave(p6, filename = file.path(figs6_dir, "Fig_S6_square.png"), width = 10, height = 10, dpi = 600)
+ggsave(p6, filename = file.path(figs6_dir, "Fig_S6_narrow.pdf"), width = 5, height = 20, dpi = 600)
 
 ###comparison to NULL
 
@@ -275,7 +277,7 @@ bisse2$lessAIC[(bisse2$delta_AIC)<=(-2)]<-1
 bisse2$moreAIC<-(1-bisse2$lessAIC)
 
 
-pdf(file=".\\outputs\\bisseAIC_distributions.pdf",height=8,width=12)
+pdf(file=ts_here("outputs", "figures", "Fig_S6", "bisseAIC_distributions.pdf"),height=8,width=12)
 
 ##make plot
 ggplot(bisse2[bisse2$param_names=="turnover0A" ,], aes(x=delta_AIC,y=fct_reorder(variable,delta_AIC),fill=variable)) +
@@ -295,7 +297,7 @@ dev.off()
 lf3$Test<-lf3$name
 
 # Plot differences in parameter rate estimates
-pdf(file=".\\outputs\\bisse_null_comparison.pdf",height=10,width=16)
+pdf(file=ts_here("outputs", "figures", "Fig_S6", "bisse_null_comparison.pdf"),height=10,width=16)
 
 ggplot(lf3[((lf3$name=="BiSSE" |lf3$name=="dull_null") ) & lf3$variable!="Marriage_Endogamous",], aes(x=AIC,fill=Test)) +
   geom_density(adjust=2)+

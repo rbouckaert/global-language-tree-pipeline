@@ -1,4 +1,5 @@
 source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+fig2_dir <- ts_dir_create("outputs", "figures", "Fig_2")
 
 # -----------------------------------------------------------------------------|
 # This script:
@@ -390,11 +391,11 @@ fittedvals <- set_palette(fittedvals, "aaas")
 plot(fittedvals)
 
 
-filename_2 <- "FIXED_Fig_2B_CORRECTEDV2"
+filename_2 <- paste0("Fig_2B_", scale_type)
 ggsave(
   filename = ts_here(
-    "outputs","Fig_2",
-    paste0(filename_2, "_", scale_type ,"_", gsub("-", "_", Sys.Date()), ".jpg")
+    fig2_dir,
+    paste0(filename_2, ".jpg")
   ),
   plot   = fittedvals,
   height = 11,
@@ -407,12 +408,12 @@ library(grid)
 combined_plot <- grid.arrange(dists, fittedvals, nullGrob(),
                               ncol = 3, widths = c(1, 1.3, 0.01)) #for all years
 
-filename_2 <- "Fig2_rawY"
+filename_2 <- paste0("Fig_2_", scale_type)
 
 ggsave(
   filename = ts_here(
-    "outputs","Fig_2",
-    paste0(filename_2, "_", scale_type ,"_",gsub("-", "_", Sys.Date()), ".png")
+    fig2_dir,
+    paste0(filename_2, ".png")
   ),
   plot   = combined_plot,
   height = 11,

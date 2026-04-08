@@ -1,4 +1,5 @@
 source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+fig1_dir <- ts_dir_create("outputs", "figures", "Fig_1")
 
 # Code to generate figure 1 data plot
 
@@ -192,7 +193,7 @@ final_plot <- plot_spacer()+ subplot_A +
 # -----------------------------------------------------------------------------|
 # 4) Subplot B -------------------------------------------------------------------
 # -----------------------------------------------------------------------------|
-ltt1 = read.csv(ts_here("outputs","Fig_1","LTT_Plot1_Data.csv"))
+ltt1 = read.csv(file.path(fig1_dir, "LTT_Plot1_Data.csv"))
 
 # Force 'cont' into a factor with the levels in the desired order:
 ltt1$cont <- factor(ltt1$cont,
@@ -213,7 +214,7 @@ p4<-ggplot(ltt1[,], aes(y=logltt,x=times,col=cont,group=tree_id_1_901))+
   ylab("Lineages (log)")+ 
   xlab("Years Ago (KY)")
   
-ggsave(ts_here("outputs","Fig_1","LTT_Plot1_2.png"),plot=p4,height=6,width=12, dpi=600)
+ggsave(file.path(fig1_dir, "LTT_Plot1_2.png"),plot=p4,height=6,width=12, dpi=600)
 
 # -----------------------------------------------------------------------------|
 # 5) Incorpotate subplot B into final_plot top right corner-----------------
@@ -249,7 +250,7 @@ final_plot_with_text <- final_plot_inset +
 
 # PNG
 ggsave(
-  filename = ts_here("outputs","Fig_1", paste0("Fig_1", sample(1:10000, 1), ".png")),
+  filename = file.path(fig1_dir, "Fig_1.png"),
   plot     = final_plot_with_text,
   height   = 13,
   width    = 12,
@@ -259,7 +260,7 @@ ggsave(
 
 # PDF
 ggsave(
-  filename = ts_here("outputs","Fig_1", paste0("Fig_1", sample(1:10000, 1), ".pdf")),
+  filename = file.path(fig1_dir, "Fig_1.pdf"),
   plot     = final_plot_with_text,
   height   = 13,
   width    = 12,

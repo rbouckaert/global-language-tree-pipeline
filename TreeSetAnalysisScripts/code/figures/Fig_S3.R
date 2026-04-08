@@ -1,4 +1,5 @@
 source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+figs3_dir <- ts_dir_create("outputs", "figures", "Fig_S3")
 
 # ------------------------------------------------------------------
 # Figure S3: Clade Counts and Variance over Time
@@ -168,7 +169,7 @@ file_prefix <- ("new_trees")
 # Save the plot as a high-quality PNG
 ggsave(
   
-  filename = ts_here("outputs","Fig_S3","Fig_S3.png"),
+  filename = file.path(figs3_dir, "Fig_S3.png"),
   plot = p,
   width = 15.92 / 2.54,           # Convert cm to inches
   height = 9.56 / 2.54,           # Convert cm to inches
@@ -178,7 +179,7 @@ ggsave(
 
 # Save the plot as a high-quality PDF
 ggsave(
-  filename = ts_here("outputs","Fig_S3","Fig_S3.pdf"),
+  filename = file.path(figs3_dir, "Fig_S3.pdf"),
   plot = p,
   width = 15.92 / 2.54,
   height = 9.56 / 2.54,
