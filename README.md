@@ -29,8 +29,10 @@ If you want to work with the BEAST-side tree generation tools, start here:
 Large inputs are not fully included in a standard `git clone`.
 
 - GitHub Releases for this repository contain large tree and analysis assets used by the TreeSet workflow:
-[https://github.com/rbouckaert/global-language-tree-pipeline/releases](https://github.com/rbouckaert/global-language-tree-pipeline/releases)
+  [https://github.com/rbouckaert/global-language-tree-pipeline/releases](https://github.com/rbouckaert/global-language-tree-pipeline/releases)
 - Additional large environmental/spatial inputs and exact unpacking locations are documented in [TreeSetAnalysisScripts/README.md](TreeSetAnalysisScripts/README.md).
+
+Unless otherwise stated, the repository `LICENSE` applies to the original source code in this repository. Input data, release assets, and other third-party materials remain under their original terms.
 
 ## Citation
 
@@ -38,4 +40,3 @@ If you use this repository, please cite the preprint above and, where relevant, 
 
 - [TreeSetAnalysisScripts/README.md](TreeSetAnalysisScripts/README.md)
 - [monos/README.md](monos/README.md)
-
