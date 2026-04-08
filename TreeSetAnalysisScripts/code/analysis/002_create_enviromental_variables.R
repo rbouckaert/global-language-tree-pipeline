@@ -29,6 +29,9 @@ source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
 # - input_data/ [Directory: updated environmental data]
 #   - final_env_datapoints.csv [CSV: Final environmental data for points]
 #   - final_env_data.csv [CSV: Final environmental data for polygons]
+#
+# If the large raster/spatial input folders are missing from a standard clone,
+# see TreeSetAnalysisScripts/README.md for external download links.
 
 #------------------------------------------------------------------------------#
 #                            Load Libraries and Data                    ----
