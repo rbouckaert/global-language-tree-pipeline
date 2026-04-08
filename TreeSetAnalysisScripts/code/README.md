@@ -16,7 +16,7 @@
 | languages_and_dialects_geoFINALupdates6.csv                                   | CSV       | Language metadata, including family, macroarea, geographical coordinates, glottocodes, threat status. |                | 002, 004, 007, 009, 010 |
 | groups_data1.csv                                                              | CSV       | Group names for simulations.                                                                          |                | 003                     |
 | global-language-trees-6636-taxa.trees                                         | Nexus     | Language phylogenies in Nexus format. 1000 posterior trees with 6636 tips each.                       |                | 003, 004_tree_slicing   |
-| islands_transformed.R                                                         | RData     | Island polygons, used to determine which languages are on islands.                                    |                | 004, 007                |
+| islands_transformed.r                                                         | RData     | Island polygons, used to determine which languages are on islands.                                    |                | 004, 007                |
 | threat_data1.csv                                      | CSV       | Threat data derived from Bromham et al. 2022 “Global predictors of language endangerment and the future of linguistic diversity” (_Nat Ecol Evol_, DOI: 10.1038/s41559-021-01604-y, Supplementary Data 4, CC BY 4.0).                                                                          |                | 007                     |
 | bisse_data_in.csv                                                             | CSV       | BiSSE input data.                                                                                     |                | 011                     |
 | tips_by_continent.csv                                                         | CSV       | Tips by continent.                                                                                    |                | 011                     |
@@ -39,7 +39,8 @@
 | input_data/final_env_datapoints.csv | CSV | Environmental data for points | 002 (output), 004 (input) |
 | simulationtrees/ | Directory | Simulated trees.<br>Contains files matching pattern "extant" (used by 014). | 003 (output), 004a, 012 (input) |
 | datasets_and_trees/ | Directory | Language/environmental data and trees for regression. Global at 3 time points (3500, 4250, 5000 Years).<br>Contains files matching *_2.csv<br>Contains files matching *_2.tre | 004a (output), 005a_regression_analyses, 005b_regression_regions (input) |
-| regression_results_no_alt/ | Directory | Regression results.<br>Contains files matching regressions25_*.csv<br>Contains files matching slopes25_*.csv | 005a (output), 006 (input) |
+| regression_results_fin_log/ | Directory | Main regression results.<br>Contains files matching regressions25_*.csv | 005a, 005ac (output), 006, Fig_2, Fig_S4 (input) |
+| regression_results_slopes/ | Directory | Regression slope summaries.<br>Contains files matching slopes25_*.csv | 005ac (output), Fig_2 (input) |
 | regression_results_regions/<br>results_*_regressions25.csv | CSV | Regression results for macroregion exclusion | 005b |
 | EDGE_scores/ | Directory | EDGE score files.<br>Contains files matching *_EDGESCORES2.csv | 008 (output), 009 (input) |
 | EDGE_scores/[tree_name]_EDGESCORES2.csv | CSV | EDGE scores for each tree | 008 [output] |
