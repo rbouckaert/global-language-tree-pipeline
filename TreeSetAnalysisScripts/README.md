@@ -110,17 +110,17 @@ following Dropbox folders can be used to restore major inputs required by
 `002_create_enviromental_variables.R`:
 
 - `input_data/2020_motorized_friction_surface/`
-  [Dropbox link](https://www.dropbox.com/scl/fo/4x49mscdyh3whdoqbbdjj/AB0tLi5TsBtLI7YXPpPhnYU/input_data/2020_motorized_friction_surface?rlkey=oir9k3ka3qvsk2i7i7st860w6&e=1&st=ismcmfxj&subfolder_nav_tracking=1&dl=0)
+[Dropbox link](https://www.dropbox.com/scl/fo/4x49mscdyh3whdoqbbdjj/AB0tLi5TsBtLI7YXPpPhnYU/input_data/2020_motorized_friction_surface?rlkey=oir9k3ka3qvsk2i7i7st860w6&e=1&st=ismcmfxj&subfolder_nav_tracking=1&dl=0)
 - `input_data/2020_walking_only_friction_surface/`
-  [Dropbox link](https://www.dropbox.com/scl/fo/4x49mscdyh3whdoqbbdjj/AGhC3UAOGSDgFtmJ4MM72G4/input_data/2020_walking_only_friction_surface?rlkey=oir9k3ka3qvsk2i7i7st860w6&subfolder_nav_tracking=1&st=k5uzap08&dl=0)
+[Dropbox link](https://www.dropbox.com/scl/fo/4x49mscdyh3whdoqbbdjj/AGhC3UAOGSDgFtmJ4MM72G4/input_data/2020_walking_only_friction_surface?rlkey=oir9k3ka3qvsk2i7i7st860w6&subfolder_nav_tracking=1&st=k5uzap08&dl=0)
 - `input_data/baseline/`
-  [Dropbox link](https://www.dropbox.com/scl/fo/4x49mscdyh3whdoqbbdjj/AJo8yKDJ-2jSI9Y_H37bHSw/input_data/baseline?rlkey=oir9k3ka3qvsk2i7i7st860w6&subfolder_nav_tracking=1&st=8vp12gqa&dl=0)
+[Dropbox link](https://www.dropbox.com/scl/fo/4x49mscdyh3whdoqbbdjj/AJo8yKDJ-2jSI9Y_H37bHSw/input_data/baseline?rlkey=oir9k3ka3qvsk2i7i7st860w6&subfolder_nav_tracking=1&st=8vp12gqa&dl=0)
 - `input_data/gcrop/`
-  [Dropbox link](https://www.dropbox.com/scl/fo/4x49mscdyh3whdoqbbdjj/ACQncQHd42nqa1F9OlIxayc/input_data/gcrop?rlkey=oir9k3ka3qvsk2i7i7st860w6&subfolder_nav_tracking=1&st=v6442v54&dl=0)
+[Dropbox link](https://www.dropbox.com/scl/fo/4x49mscdyh3whdoqbbdjj/ACQncQHd42nqa1F9OlIxayc/input_data/gcrop?rlkey=oir9k3ka3qvsk2i7i7st860w6&subfolder_nav_tracking=1&st=v6442v54&dl=0)
 - `input_data/langa/`
-  [Dropbox link](https://www.dropbox.com/scl/fo/4x49mscdyh3whdoqbbdjj/AE2LYNjkgLkMuC1MtMqwnlY/input_data/langa?rlkey=oir9k3ka3qvsk2i7i7st860w6&subfolder_nav_tracking=1&st=s972iap9&dl=0)
+[Dropbox link](https://www.dropbox.com/scl/fo/4x49mscdyh3whdoqbbdjj/AE2LYNjkgLkMuC1MtMqwnlY/input_data/langa?rlkey=oir9k3ka3qvsk2i7i7st860w6&subfolder_nav_tracking=1&st=s972iap9&dl=0)
 - `input_data/temp_data_10000BC/`
-  [Dropbox link](https://www.dropbox.com/scl/fo/4x49mscdyh3whdoqbbdjj/AOWHfiF6KXC-JF1MjQkrm0I/input_data/temp_data_10000BC?rlkey=oir9k3ka3qvsk2i7i7st860w6&subfolder_nav_tracking=1&st=zt3896n6&dl=0)
+[Dropbox link](https://www.dropbox.com/scl/fo/4x49mscdyh3whdoqbbdjj/AOWHfiF6KXC-JF1MjQkrm0I/input_data/temp_data_10000BC?rlkey=oir9k3ka3qvsk2i7i7st860w6&subfolder_nav_tracking=1&st=zt3896n6&dl=0)
 
 ### Hardware requirements
 
@@ -327,21 +327,7 @@ Rscript code/tables/Table_S1.R
 - `outputs/`: the main script-written location for tables, summaries, and intermediate products
 - `outputs/figures/`: the main script-written location for figure exports
 
-## 5. How to run the software on your own data
-
-This workflow is specialized to the global language diversification dataset, but it can be adapted if the same data contracts are preserved.
-
-To apply the workflow to a new dataset:
-
-1. Provide a posterior treeset in the same general format expected by the analysis scripts.
-2. Provide language metadata keyed by `glottocode` or an equivalent stable identifier used consistently across trees, trait data, and spatial data.
-3. Provide the environmental, threat, and cultural-trait inputs required by the relevant scripts.
-4. Preserve expected column names or update the scripts accordingly.
-5. Re-run the workflow from `001` onward so all downstream derived files are regenerated consistently.
-
-For this manuscript workflow, identifier consistency is critical: joins are performed on stable language identifiers rather than free-text names.
-
-## 6. Reproduction instructions
+## 5. Reproduction instructions
 
 ### Reproducing the manuscript analyses
 
