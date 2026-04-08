@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # ------------------------------------------------------------------------------#
 #               Language Phylogenies Processing and Tree Statistics         ----
 # ------------------------------------------------------------------------------#
@@ -34,7 +36,7 @@ p_load("ape", "picante", "moments", "phytools", "here", "data.table",
 
 # Create necessary directories if they don't exist
 for (dir in c("edscores", "all_trees", "summary", "outputs", "outputs/in_text_data")) {
-  dir_path <- here(dir)
+  dir_path <- ts_here(dir)
   if (!dir.exists(dir_path)) {
     dir.create(dir_path, recursive = TRUE)
     cat("Created directory:", dir_path, "\n")
@@ -42,10 +44,10 @@ for (dir in c("edscores", "all_trees", "summary", "outputs", "outputs/in_text_da
 }
 
 # read in all the trees
-tt <- read.nexus(here("input_data", "global-language-trees-6636-taxa.trees"))
+tt <- read.nexus(ts_here("input_data", "global-language-trees-6636-taxa.trees"))
 
 # read in family and macroareas
-res5 <- fread(file = here("input_data",
+res5 <- fread(file = ts_here("input_data",
                           "languages_and_dialects_geoFINALupdates6.csv"))
 
 res5$`DPLACE subsistence` <- res5$`DPLACE subsistence` - 1
@@ -76,7 +78,7 @@ for (y in 1:length(mac1)) {
 }
 
 ## read in family data -------------
-lang1 <- read.csv(here("input_data", "top27families.csv"),
+lang1 <- read.csv(ts_here("input_data", "top27families.csv"),
                   stringsAsFactors = FALSE)
 
 
@@ -96,7 +98,7 @@ for (y in 1:nrow(lang1)) {
 
 
 ## read in lexicon. family data --------
-lex1 <- read.csv(here("input_data",
+lex1 <- read.csv(ts_here("input_data",
                       "Lexicongraphic_familes.csv"),
                  stringsAsFactors = FALSE)
 
@@ -147,16 +149,16 @@ all1$uni1 <- gsub("South America", "South-America", all1$uni1)
 # ------------------------------------------------------------------------------#
 
 # Write out data files if they don't exist yet
-if (!file.exists(here("input_data", "groups_table.csv"))) {
+if (!file.exists(ts_here("input_data", "groups_table.csv"))) {
   write.csv(all1[!duplicated(all1$uni), c("group", "type")],
-            file = here("input_data", "groups_table.csv"))
+            file = ts_here("input_data", "groups_table.csv"))
 }
 
 grps <- unique(all1$uni1)
 
 # Write out groups data if file doesn't exist
-if (!file.exists(here("input_data", "groups_data1.csv"))) {
-  write.csv(grps, file = here("input_data", "groups_data1.csv"))
+if (!file.exists(ts_here("input_data", "groups_data1.csv"))) {
+  write.csv(grps, file = ts_here("input_data", "groups_data1.csv"))
 }
 
 # ------------------------------------------------------------------------------#
@@ -223,7 +225,7 @@ process_single_tree <- function(ii, tt, grps, all1) {
   names(ED) <- c("glottocode", "ED")
   
   ## write out ED
-  write.csv(ED, file = here("edscores", paste0("edscores_", ii, ".csv")))
+  write.csv(ED, file = ts_here("edscores", paste0("edscores_", ii, ".csv")))
   
   results <- list()
   
@@ -243,13 +245,13 @@ process_single_tree <- function(ii, tt, grps, all1) {
     
     # Save tree if not present
     ## Check if the file already exists
-    file_path <- here("all_trees", paste0("tree_", ii, "_", unique(grp1$uni1), ".tree"))
+    file_path <- ts_here("all_trees", paste0("tree_", ii, "_", unique(grp1$uni1), ".tree"))
     
-    if (!file_path %in% list.files(here("all_trees"), pattern = "tree", full.names = TRUE)) {
+    if (!file_path %in% list.files(ts_here("all_trees"), pattern = "tree", full.names = TRUE)) {
       ape::write.tree(tree, file = file_path)
     }
 
-    summary_path <- here("summary", 
+    summary_path <- ts_here("summary", 
                          paste0("summary_", ii, "_", unique(grp1$uni1), ".csv"))
     
     if (!file.exists(summary_path)) {
@@ -285,7 +287,7 @@ stopCluster(cl)
 df_all <- rbindlist(results)
 
 # 6. Save results
-write.csv(df_all, file = here("outputs", "All_Trees_Summary.csv"), row.names = FALSE)
+write.csv(df_all, file = ts_here("outputs", "All_Trees_Summary.csv"), row.names = FALSE)
 
 # ------------------------------------------------------------------------------#
 #                              Post-processing                              ----
@@ -341,4 +343,4 @@ summary_table_coda2$Median = round(summary_table_coda2$Median, 2)
 summary_table_coda2$HDPI_Lower = round(summary_table_coda2$HDPI_Lower, 2)
 summary_table_coda2$HDPI_Upper = round(summary_table_coda2$HDPI_Upper, 2)
 
-write.csv(summary_table_coda, file = here("outputs","in_text_data","DR_rates_across_tips.csv"), row.names = FALSE)
+write.csv(summary_table_coda, file = ts_here("outputs","in_text_data","DR_rates_across_tips.csv"), row.names = FALSE)

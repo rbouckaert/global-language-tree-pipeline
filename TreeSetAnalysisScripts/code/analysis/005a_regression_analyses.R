@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # ------------------------------------------------------------------------------#
 #                          Data Preparation ------
 # ------------------------------------------------------------------------------#
@@ -33,7 +35,8 @@ cutD <- function(x, n) {
 }
 
 # Set up folder paths
-data_trees = here("datasets_and_trees_fixed_scaled_raw_scaled_logged")
+ts_dir_create("regression_results_fin_log")
+data_trees = ts_here("datasets_and_trees")
 
 # Read in CSV files ----
 st0 <- list.files(data_trees, pattern = "_2.csv", full.names = TRUE)
@@ -99,7 +102,7 @@ for (ii in 1:nrow(files1)) {
   
   if (paste("results_", files1[ii, "uni"], "_",
             typeX, "_regressions25.csv", sep = "") %in%
-      list.files(here("regression_results_fin_log"),
+      list.files(ts_here("regression_results_fin_log"),
                  full.names = FALSE)) {
     next
   }
@@ -169,8 +172,8 @@ for (ii in 1:nrow(files1)) {
     colnames(mat) <- rownames(mat)
     mat <- as.matrix(mat[1:dim(mat)[1], 1:dim(mat)[1]])
     samp1 <- sample(1e10, 1)
-    nb2INLA(paste0(here("cl_graph/cl_graph_"), samp1), nbs)
-    H <- inla.read.graph(filename = paste0(here("cl_graph/cl_graph_"), samp1))
+    nb2INLA(paste0(ts_here("cl_graph", "cl_graph_"), samp1), nbs)
+    H <- inla.read.graph(filename = paste0(ts_here("cl_graph", "cl_graph_"), samp1))
     
     # Make tree VCV matrix ----
     phylo_covar_mat <- ape::vcv(tr1)
@@ -315,8 +318,12 @@ for (ii in 1:nrow(files1)) {
     }
     
     # Save Prediction Summaries ----
-    write.csv(quads2, file = paste(here("regression_results_fin_log/results_"), 
-                                   files1[ii, "uni"], "_slopes25.csv", sep = ""), 
+    write.csv(
+      quads2,
+      file = ts_here(
+        "regression_results_fin_log",
+        paste0("results_", files1[ii, "uni"], "_slopes25.csv")
+      ),
               row.names = FALSE)
     
     # Finalize Regression Results ----
@@ -358,7 +365,7 @@ for (ii in 1:nrow(files1)) {
   # Save Loop Results ----
   # After completing all folds, save the aggregated results to a CSV file
   print(ii)
-  write.csv(res4, file = here("regression_results_fin_log", 
+  write.csv(res4, file = ts_here("regression_results_fin_log", 
                               paste("results_", files1[ii, "uni"], "_", typeX, "_regressions25.csv", 
                                     sep = "")),
             row.names = FALSE)
@@ -367,4 +374,3 @@ for (ii in 1:nrow(files1)) {
   iteration_times[ii] <- as.numeric(difftime(end_time, start_time, units = "secs"))
   print(paste("Iteration", ii, "took", round(iteration_times[ii], 2), "seconds"))
 } # End of Main Loop ----
-

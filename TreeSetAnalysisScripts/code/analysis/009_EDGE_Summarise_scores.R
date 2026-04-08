@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # Script: 009_EDGE_Summarise_scores.R
 # Description: This script summarizes EDGE (Evolutionarily Distinct and Globally Endangered) 
 # scores for languages across multiple phylogenetic trees, computes rankings, 
@@ -34,8 +36,8 @@ library(here)        # Path handling
 #------------------------------------------------------------------------------
 
 # Get list of EDGE score files
-fil1 <- list.files(here("EDGE_scores"), pattern="_EDGESCORES2.csv", full.names=TRUE)
-fil2 <- list.files(here("EDGE_scores"), pattern="_EDGESCORES2.csv", full.names=FALSE)
+fil1 <- list.files(ts_here("EDGE_scores"), pattern="_EDGESCORES2.csv", full.names=TRUE)
+fil2 <- list.files(ts_here("EDGE_scores"), pattern="_EDGESCORES2.csv", full.names=FALSE)
 fil3 <- read.table(text=fil2, sep="_")
 
 # Process each file
@@ -84,10 +86,10 @@ for (j in 1:length(fil1)) {
 }
 
 # Save combined results
-# fwrite(EDGE2, file=here("outputs", "EDGEscores", "ALL_EDGE.csv"))
+# fwrite(EDGE2, file=ts_here("outputs", "EDGEscores", "ALL_EDGE.csv"))
 
 # Read saved data
-EDGE2 <- read.csv(here("outputs", "EDGEscores", "ALL_EDGE.csv"), stringsAsFactors = FALSE)
+EDGE2 <- read.csv(ts_here("outputs", "EDGEscores", "ALL_EDGE.csv"), stringsAsFactors = FALSE)
 
 #------------------------------------------------------------------------------
 # Part 2: Summarize EDGE scores by language
@@ -118,7 +120,7 @@ tt$Group.1[tt$Group.1 == "iron1242"] <- "osse1243"
 #------------------------------------------------------------------------------
 
 # Get list of ED score files
-fil1 <- list.files(here("edscores_equalsplits"), pattern=".csv", full.names=TRUE)
+fil1 <- list.files(ts_here("edscores_equalsplits"), pattern=".csv", full.names=TRUE)
 
 # Process each file
 for (j in 1:length(fil1)) {
@@ -141,18 +143,18 @@ for (j in 1:length(fil1)) {
 }
 
 # Save combined results
-fwrite(ED2, file=here("outputs", "EDGEscores", "ALL_ED_wTREES.csv"))
+fwrite(ED2, file=ts_here("outputs", "EDGEscores", "ALL_ED_wTREES.csv"))
 
 # Read EDGE data again (this seems redundant in the original script)
-ED2 <- read.csv(here("outputs", "EDGEscores", "ALL_EDGE.csv"), stringsAsFactors = FALSE)
-#fwrite(ED2, file=here("outputs", "EDGEscores", "ALL_EDGE_eq.csv"))
+ED2 <- read.csv(ts_here("outputs", "EDGEscores", "ALL_EDGE.csv"), stringsAsFactors = FALSE)
+#fwrite(ED2, file=ts_here("outputs", "EDGEscores", "ALL_EDGE_eq.csv"))
 ED2$Species[ED2$Species == "iron1242"] <- "osse1243"
 #------------------------------------------------------------------------------
 # Part 4: Merge EDGE scores with language metadata
 #------------------------------------------------------------------------------
 # I want to copy ED values from previous ED2 into ED2 where $species and $tree match
 # Merge ED scores with EDGE scores
-all = read.csv(here('outputs','EDGEscores','ALL_ED_wTREES.csv'))
+all = read.csv(ts_here('outputs','EDGEscores','ALL_ED_wTREES.csv'))
 all$glottocode[all$glottocode == "iron1242"] <- "osse1243"
 
 # Join only on the columns needed and update the ED column in ED2
@@ -172,7 +174,7 @@ tt3 <- aggregate(ED2[, c(5, 6, 8:(ncol(ED2)))], by=list(ED2$Species), median, na
 tt$Group.1[tt$Group.1 == "iron1242"] <- "osse1243"
 
 # Read language data
-res5 <- read.csv(file=here("input_data", "languages_and_dialects_geoFINALupdates6.csv"))
+res5 <- read.csv(file=ts_here("input_data", "languages_and_dialects_geoFINALupdates6.csv"))
 
 # Merge EDGE scores with language names
 all_names <- merge(tt, res5[, c("glottocode", "name", "iso_final")], by.x="Group.1", by.y="glottocode")
@@ -181,8 +183,8 @@ all_names <- merge(tt, res5[, c("glottocode", "name", "iso_final")], by.x="Group
 all_names2 <- all_names[all_names$EDGErank100 > 0, ]
 
 # Save top languages
-fwrite(all_names2, file=here("outputs", "EDGEscores", "NEW_EDGE_top_100.csv"))
-fwrite(all_names, file=here("outputs", "EDGEscores", "ALL_EDGE_top_100.csv"))
+fwrite(all_names2, file=ts_here("outputs", "EDGEscores", "NEW_EDGE_top_100.csv"))
+fwrite(all_names, file=ts_here("outputs", "EDGEscores", "ALL_EDGE_top_100.csv"))
 
 # Convert to data.table for faster operations
 setDT(all_names2)
@@ -200,4 +202,4 @@ setkey(tt, Group.1)
 tt2b <- res5[tt]
 
 # Write final results
-fwrite(tt2b, file=(here("outputs", "ALL_EDGE_top_100_86928.csv")))
+fwrite(tt2b, file=(ts_here("outputs", "ALL_EDGE_top_100_86928.csv")))

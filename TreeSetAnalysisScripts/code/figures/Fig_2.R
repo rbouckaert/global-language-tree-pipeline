@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # -----------------------------------------------------------------------------|
 # This script:
 # - Loads regression results from .csv files
@@ -6,8 +8,8 @@
 # - Outputs these tables and plots with modified filenames (appending "_ARTUR")
 #
 # Requirements:
-# - Directory: here("regression_results_no_alt") containing "regressions25" files
-# - Input files: e.g., "regressions25_...csv"
+# - Directory: regression_results_fin_log/ containing "regressions25" files
+# - Directory: regression_results_slopes/ containing "slopes25" files
 # - The final output files (summary tables, figures) are saved in the "outputs" folder
 # -----------------------------------------------------------------------------|
 
@@ -16,8 +18,8 @@ scales, ggh4x)
 
 # 1. LOAD FILES -------------------------------------------------------------------
 # List all files matching "regressions25" pattern
-results_folder1 = here("regression_results_fin_log")
-results_folder2 = here("regression_results_correct_scale")
+results_folder1 = ts_here("regression_results_fin_log")
+results_folder2 = ts_here("regression_results_slopes")
 
 files <- list.files(results_folder1, pattern="regressions25", full.name=TRUE)
 files2 <- list.files(results_folder1, pattern="regressions25", full.name=TRUE)
@@ -390,7 +392,7 @@ plot(fittedvals)
 
 filename_2 <- "FIXED_Fig_2B_CORRECTEDV2"
 ggsave(
-  filename = here(
+  filename = ts_here(
     "outputs","Fig_2",
     paste0(filename_2, "_", scale_type ,"_", gsub("-", "_", Sys.Date()), ".jpg")
   ),
@@ -408,7 +410,7 @@ combined_plot <- grid.arrange(dists, fittedvals, nullGrob(),
 filename_2 <- "Fig2_rawY"
 
 ggsave(
-  filename = here(
+  filename = ts_here(
     "outputs","Fig_2",
     paste0(filename_2, "_", scale_type ,"_",gsub("-", "_", Sys.Date()), ".png")
   ),

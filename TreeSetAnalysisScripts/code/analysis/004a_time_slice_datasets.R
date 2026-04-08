@@ -1,9 +1,11 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # ------------------------------------------------------------------------------#
 #                              Time Slice Datasets ----                         #    
 # Input data:
 # - input_data/languages_and_dialects_geoFINALupdates6.csv [CSV: Language metadata]
 # - input_data/processed_threat_data_frame.csv [CSV: Threat data]
-# - input_data/islands_transformed.R [RData: Island polygons]
+# - input_data/islands_transformed.r [RData: Island polygons]
 # - input_data/langa/langa.shp [Shapefile: Language polygons]
 # - input_data/final_env_data.csv [CSV: Environmental data for polygons]
 # - input_data/final_env_datapoints.csv [CSV: Environmental data for points]
@@ -25,12 +27,12 @@ library(pacman)
 p_load("moments", "data.table","here")
 
 # Phylogenetic analysis libraries
-p_load(apTreeshape,caper,dismo,RPANDA,e1071,phangorn,phytools, 
-       picante, mice,raster,paleotree,diversitree,ape,rgdal,
-       sp,tcltk,nlme,ade4,terra,rworldmap)
+p_load(caper,dismo,RPANDA,e1071,phangorn,phytools, 
+       picante, mice,raster,paleotree,ape,
+       sp,nlme,ade4,terra,rworldmap)
 
 # Source supporting functions
-source(here("code","analysis","AUX1_time_slice_functions2.R"))
+source(ts_here("code","analysis","AUX1_time_slice_functions2.R"))
 
 ## Constant error message
 e <- simpleError("test error")
@@ -48,8 +50,8 @@ cutD <- function(x, n) {
 # ------------------------------------------------------------------------------#
 
 ## Load tip data ----
-res5 <- fread(file = here("input_data", "languages_and_dialects_geoFINALupdates6.csv"))
-tmp = fread(file = here("input_data", "processed_threat_data_frame.csv"))
+res5 <- fread(file = ts_here("input_data", "languages_and_dialects_geoFINALupdates6.csv"))
+tmp = fread(file = ts_here("input_data", "processed_threat_data_frame.csv"))
 
 res5$`DPLACE subsistence` <- res5$`DPLACE subsistence` - 1
 
@@ -68,7 +70,7 @@ res5[, "REGION" := GEO3major]
 res5[, "SUBREGION" := IMAGE24]
 
 ## Load island data -----
-load(file = here("input_data", "islands_transformed.R"))
+load(file = ts_here("input_data", "islands_transformed.r"))
 bi2$dummy <- 1
 rr3 <- over(rr, bi2)
 rr3$dummy[is.na(rr3$dummy)] <- 0
@@ -77,7 +79,7 @@ setkey(res5, iso_final)
 
 ## Load language shapefiles -----
 library(sf)
-langa <- st_read(here("input_data", "langa", "langa.shp"))
+langa <- st_read(ts_here("input_data", "langa", "langa.shp"))
 library(data.table)
 langa_data <- as.data.table(langa)
 langa <- print(langa)
@@ -94,7 +96,7 @@ res5 <- agg1[res5]
 
 # Read in all points dataframe
 # Env data from ethnolog polygons
-env_data3 <- fread(here("input_data","fixed","final_env_data.csv"))
+env_data3 <- fread(ts_here("input_data","final_env_data.csv"))
 env_data3 <- env_data3[!is.na(env_data3$Time3), ]
 setkey(env_data3, LANG_IS)
 
@@ -109,12 +111,13 @@ env_data2 <- env_data3[reslu, nomatch = 0]
 ## Work out what is in above
 res_temp <- res5[!glottocode %in% env_data2$glottocode, ]
 
-env_datapA <- fread(here("input_data", "fixed","final_env_datapoints.csv"))
+env_datapA <- fread(ts_here("input_data", "final_env_datapoints.csv"))
 env_datap <- env_datapA[!is.na(env_datapA$Time3), ]
 env_datap <- env_datap[LANG_IS %in% res_temp$glottocode, ]
 env_datap[, glottocode := LANG_IS]
 
 ### Combine ethnologue derived data with glotto centroid point data
+env_data2 = env_data2 %>% dplyr::select(-cropland, -statesat, -alt1, - alt_var)
 env_data3 <- rbind(env_data2, env_datap)
 env_data3[, uni := paste0(glottocode, Time3)]
 setkey(env_data3, "uni")
@@ -133,7 +136,7 @@ env_data[, uni := NULL]
 
 # Perform a left join to merge L1_Users from tmp to env_data based on glottocode
 # Use match to align L1_Users from tmp to env_data
-tmp = fread(file = here("input_data", "processed_threat_data_frame.csv"))
+tmp = fread(file = ts_here("input_data", "processed_threat_data_frame.csv"))
 env_data$L1_Users <- tmp$L1_Users[match(env_data$glottocode, tmp$glottocode)]
 
 # ------------------------------------------------------------------------------#
@@ -141,10 +144,10 @@ env_data$L1_Users <- tmp$L1_Users[match(env_data$glottocode, tmp$glottocode)]
 # ------------------------------------------------------------------------------#
 
 ### Read in trees
-tt0 <- list.files(here("all_trees"), full.names = TRUE)
+tt0 <- list.files(ts_here("all_trees"), full.names = TRUE)
 
 ## Tree name
-tt2a <- list.files(here("all_trees"), full.names = FALSE)
+tt2a <- list.files(ts_here("all_trees"), full.names = FALSE)
 
 ## Get rid of underscores
 tt2a <- gsub("lexicon_families", "lexiconfamilies", tt2a)
@@ -154,10 +157,10 @@ tt3a <- read.table(text = tt2a, sep = "_")
 tt3a$V5 <- 1
 
 ## Simualated trees
-st0 <- list.files(here("simulationtrees"), pattern = "extant", full.names = TRUE)
+st0 <- list.files(ts_here("simulationtrees"), pattern = "extant", full.names = TRUE)
 
 ## Tree name
-st2a <- list.files(here("simulationtrees"), pattern = "extant", full.names = FALSE)
+st2a <- list.files(ts_here("simulationtrees"), pattern = "extant", full.names = FALSE)
 st2a <- gsub(".tre", "", st2a)
 st2a <- gsub("lexicon_families", "lexiconfamilies", st2a)
 st3a <- read.table(text = st2a, sep = "_")
@@ -182,12 +185,14 @@ tt3 <- tt3[sam1, ]
 tt2 <- tt2[sam1]
 
 ## Run loop ----
+ts_dir_create("datasets_and_trees")
+
 for (ii in 1:length(tt)) {
   time_start = Sys.time()
   
   ## Check if done
   if (paste("es4_", tt2[[ii]], "time", "_3500", "_2.csv", sep = "") %in%
-   list.files(here("datasets_and_trees_fixed"), full.names = FALSE)) {
+   list.files(ts_here("datasets_and_trees"), full.names = FALSE)) {
     next
   }
 
@@ -335,14 +340,39 @@ for (ii in 1:length(tt)) {
     ### Bind back to tree set with group.1
     es2a <- cbind(es2, env_data_per_tree[, -1])
 
+    # Preserve raw covariates and derive the transformed terms expected by the
+    # downstream regression scripts before scaling the model inputs.
+    es2a$area_raw <- es2a$area
+    es2a$popd_raw <- es2a$popd
+    es2a$friction_raw <- es2a$friction
+    es2a$distancetocityyear2_raw <- es2a$distancetocityyear2
+    es2a$island_raw <- es2a$island
+
+    es2a$area_log <- log1p(pmax(es2a$area_raw, 0))
+    es2a$popd_log <- log1p(pmax(es2a$popd_raw, 0))
+    es2a$friction_log <- log1p(pmax(es2a$friction_raw, 0))
+
     # scale
-    e3a <- apply(es2a[, !names(es2a) %in% c("tree", "REGION", "SUBREGION",
-                                            "longitude", "latitude", "length")],
-                                            2, scale2)
+    scale_exclusions <- c(
+      "tree", "REGION", "SUBREGION", "longitude", "latitude", "length",
+      "area_raw", "popd_raw", "friction_raw", "distancetocityyear2_raw",
+      "island_raw"
+    )
+    e3a <- apply(
+      es2a[, !names(es2a) %in% scale_exclusions],
+      2,
+      scale2
+    )
 
     ## Non scaled variables
-    es3b <- cbind(es2a[, c("tree", "REGION", "SUBREGION", "longitude",
-                           "latitude", "length")], e3a)
+    es3b <- cbind(
+      es2a[, c(
+        "tree", "REGION", "SUBREGION", "longitude", "latitude", "length",
+        "area_raw", "popd_raw", "friction_raw", "distancetocityyear2_raw",
+        "island_raw"
+      )],
+      e3a
+    )
 
     ### Inmpute missing values
     temp1 <- suppressWarnings(mice(es3b, m = 1, maxit = 50, method = "pmm",
@@ -377,10 +407,10 @@ for (ii in 1:length(tt)) {
     es4$group <- tt3[ii, "V3"]
 
     ## write out files
-    write.csv(es4, file = here("datasets_and_trees_fixed", paste("es4_", tt2[[ii]],
+    write.csv(es4, file = ts_here("datasets_and_trees", paste("es4_", tt2[[ii]],
                   "time_", -1 * es4$Time2[1], "_2.csv", sep = "")),
                   row.names = FALSE)
-    write.tree(tr1, file = here("datasets_and_trees_fixed", paste("es4_", tt2[[ii]],
+    write.tree(tr1, file = ts_here("datasets_and_trees", paste("es4_", tt2[[ii]],
                    "time_", -1 * es4$Time2[1], "_2.tre", sep = "")))
   } ## j ## end of tots
   time_end = Sys.time()

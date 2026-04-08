@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # Code to create results and plots for Fig3 and FigS5/S6
 
 # Load libraries ----------------------------------------------------------------
@@ -8,10 +10,10 @@ p_load(ggplot, cowplot, ggpubr, gridExtra, RColorBrewer, ggridges,
 
 # Load data --------------------------------------------------------------------
 # Load bisse results data
-lf3 = read.csv(here("outputs", "bisse_results1.csv"))
+lf3 = read.csv(ts_here("outputs", "bisse_results1.csv"))
 
 # Load BISSE Simulation data
-bisse_sim_files = list.files("outputs/BISSE_SIM", full.names = TRUE)
+bisse_sim_files = list.files(ts_here("outputs", "BISSE_SIM"), full.names = TRUE)
 for (i in 1:length(bisse_sim_files)) {
   bisse_sim = read.csv(bisse_sim_files[i])
   bisse_sim$number = gsub("_Global_BISSE_runs3.csv", "", basename(bisse_sim_files[i]))
@@ -39,7 +41,7 @@ names(lf3)[!names(lf3) %in% names(bisse_sim_combined)]
 DR1 = rbind(lf3, bisse_sim_combined)
 
 # Load parameter names object called xxx
-load(here("input_data", "bisse_param_names.r"))
+load(ts_here("input_data", "bisse_param_names.r"))
 
 # Specify what types of test
 types<-unique(DR1$name)
@@ -90,8 +92,8 @@ p5 <- ggplot(DR1,  # Use the full dataset, not just the subset
 
 print(p5)
 
-ggsave(here("outputs","Fig_S5", "Fig_S5_new.png"), p5, height=3, width=8, dpi = 600)
-ggsave(here("outputs","Fig_S5", "Fig_S5_new.pdf"), p5, height=3, width=8, dpi = 600)
+ggsave(ts_here("outputs","Fig_S5", "Fig_S5_new.png"), p5, height=3, width=8, dpi = 600)
+ggsave(ts_here("outputs","Fig_S5", "Fig_S5_new.pdf"), p5, height=3, width=8, dpi = 600)
 
 # Leave-one-out ridges ---------------------------------------------------------
 DR1$location <- factor(DR1$location, levels = c("Global","Africa", "America","Eurasia", "Oceania"))
@@ -116,11 +118,11 @@ p5r = ggplot(DR1[DR1$Parameters==0 & DR1$variable!="Endogamous Marriage",],
 
 print(p5r)
 
-ggsave(here("outputs","Fig_S5", "Fig_S5_ridges.png"), p5r, height=3, width=8, dpi = 600)
+ggsave(ts_here("outputs","Fig_S5", "Fig_S5_ridges.png"), p5r, height=3, width=8, dpi = 600)
 
 # Fig 3 Main --------------------------------------------------------------------
 # Load BISSE plots data
-bisp_long6 = read.csv(here("outputs", "BISSE_Plots3_S6_data.csv"))
+bisp_long6 = read.csv(ts_here("outputs", "BISSE_Plots3_S6_data.csv"))
 
 # Plot results of bisse
 p3 = ggplot(data=bisp_long6[bisp_long6$Parameter!="Constant Rate" & bisp_long6$location=="Global" ,],
@@ -134,8 +136,8 @@ p3 = ggplot(data=bisp_long6[bisp_long6$Parameter!="Constant Rate" & bisp_long6$l
   theme(legend.position = c(0.77, 0.875))
 
 # Save PNG and PDF
-ggsave(p3, filename = here("outputs","Fig_3", "Fig_3.pdf"), width = 5, height = 3.5, dpi = 1000)
-ggsave(p3, filename = here("outputs","Fig_3", "Fig_3.png"), width = 5, height = 3.5, dpi = 1000)
+ggsave(p3, filename = ts_here("outputs","Fig_3", "Fig_3.pdf"), width = 5, height = 3.5, dpi = 1000)
+ggsave(p3, filename = ts_here("outputs","Fig_3", "Fig_3.png"), width = 5, height = 3.5, dpi = 1000)
 
 # Fig S6 Supplementary --------------------------------------------------------------------
 # Plot results of bisse
@@ -151,6 +153,5 @@ p6 = ggplot(data=bisp_long6[bisp_long6$Parameter!="Constant Rate" & bisp_long6$l
   theme(legend.position = c(0.85, 0.94))
 
 # Save PNG and PDF
-ggsave(p6, filename = here("outputs","Fig_S6", "Fig_S6_square.png"), width = 10, height = 10, dpi = 600)
-ggsave(p6, filename = here("outputs","Fig_S6", "Fig_S6_narrow.pdf"), width = 5, height = 20, dpi = 600)
-
+ggsave(p6, filename = ts_here("outputs","Fig_S6", "Fig_S6_square.png"), width = 10, height = 10, dpi = 600)
+ggsave(p6, filename = ts_here("outputs","Fig_S6", "Fig_S6_narrow.pdf"), width = 5, height = 20, dpi = 600)

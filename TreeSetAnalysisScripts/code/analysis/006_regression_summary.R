@@ -1,10 +1,13 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # Script: 006_regression_summary.R
 # Description: Loads regression results from .csv files, processes the results, calculates significance, and summaries
 #              Produces summary tables and plots, outputs these tables and plots with modified filenames
 
 # Input data:
-# - regression_results_no_alt/ [Directory: Contains regression results]
+# - regression_results_fin_log/ [Directory: Regression result files]
 #   - regressions25_*.csv [CSV: Regression result files]
+# - regression_results_slopes/ [Directory: Slope summaries]
 #   - slopes25_*.csv [CSV: Slope summaries]
 
 # Output data:
@@ -25,8 +28,8 @@ library(here)
 
 ### Load regression results
 # List all files matching "regressions25" pattern
-files <- list.files(here("regression_results_fin_log"), pattern="regressions25", full.name=TRUE)
-files2 <- list.files(here("regression_results_fin_log"), pattern="regressions25", full.name=TRUE)
+files <- list.files(ts_here("regression_results_fin_log"), pattern="regressions25", full.name=TRUE)
+files2 <- list.files(ts_here("regression_results_fin_log"), pattern="regressions25", full.name=TRUE)
 
 res1 <- NULL
 for(x in seq_along(files)){
@@ -167,9 +170,9 @@ sig_prop$x_round = paste0(round(100*sig_prop$x, 2),"%")
 
 filenames_signif = "sig_prop5_linear"
 
-if(!file.exists(here("outputs","fixed", paste0(filenames_signif, ".csv")
+if(!file.exists(ts_here("outputs", paste0(filenames_signif, ".csv")
 ))){
-  write.csv(sig_prop, file=here("outputs","fixed", paste0(filenames_signif, ".csv")
+  write.csv(sig_prop, file=ts_here("outputs", paste0(filenames_signif, ".csv")
 ))
 } else {
   print("File already exists!")
@@ -187,10 +190,10 @@ slopes1 <- cbind(slopesm, slopess)
 
 filenames_slopes = "slopes2_linear"
 
-if(!file.exists(here("outputs","fixed", 
+if(!file.exists(ts_here("outputs", 
                 paste0(filenames_slopes, 
                 ".csv")))){
-    write.csv(slopes1, file=here("outputs","fixed", 
+    write.csv(slopes1, file=ts_here("outputs", 
               paste0(filenames_slopes, ".csv")
   ))
 } else {
@@ -227,10 +230,10 @@ tab2$prop_above_zero2 <- round(tab2$prop_above_zero,3)
 
 filename_notzero = "not_zero_table4_linear"
 
-if(!file.exists(here("outputs", "fixed",
+if(!file.exists(ts_here("outputs", 
                      paste0(filename_notzero = "not_zero_table4_linear", 
                             ".csv")))){
-  write.csv(tab2, file=here("outputs", "fixed",
+  write.csv(tab2, file=ts_here("outputs",
                                paste0(filename_notzero = "not_zero_table4_linear", ".csv")
   ))
 } else {

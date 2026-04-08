@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # Script: 012_LTT_data.R
 # Description: Creates data for Lineage Through Time (LTT) plots for Figure 1.
 #              Processes phylogenetic trees by continent and generates LTT metrics.
@@ -31,7 +33,7 @@ library(here)         # Path handling
 # Part 1: Load language data
 #------------------------------------------------------------------------------
 # Read language data with dialect information
-res5 <- read.csv(file = here("input_data", 
+res5 <- read.csv(file = ts_here("input_data", 
                             "languages_and_dialects_geoFINALupdates6.csv"), 
                 stringsAsFactors = FALSE)
 
@@ -51,7 +53,7 @@ trees <- NULL
 # Loop through each continent
 for (kk in 1:length(all_conts)) {
   # Get trees for current continent
-  tt <- list.files(here("all_trees"), pattern = all_conts[kk], full.names = TRUE)
+  tt <- list.files(ts_here("all_trees"), pattern = all_conts[kk], full.names = TRUE)
   
   # Loop through tree samples
   for(ii in samp1) {
@@ -105,9 +107,9 @@ ltt1$cont[ltt1$cont == "North-America"] <- "North America"
 ltt1$cont[ltt1$cont == "South-America"] <- "South America"
 
 # Create output directory if it doesn't exist
-if(!dir.exists(here("outputs", "Fig_1"))) {
-  dir.create(here("outputs", "Fig_1"), recursive = TRUE)
+if(!dir.exists(ts_here("outputs", "Fig_1"))) {
+  dir.create(ts_here("outputs", "Fig_1"), recursive = TRUE)
 }
 
 # Save LTT data
-write.csv(ltt1, here("outputs", "Fig_1", "LTT_Plot1_Data.csv"), row.names = FALSE)
+write.csv(ltt1, ts_here("outputs", "Fig_1", "LTT_Plot1_Data.csv"), row.names = FALSE)

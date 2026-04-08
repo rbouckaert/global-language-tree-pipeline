@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # Script: 014_simulation_trees_summary_statsb.R
 # Description: Computes summary statistics for simulation trees and outputs per-tree results.
 #------------------------------------------------------------------------------
@@ -22,7 +24,7 @@ library(data.table)
 library(here) # Added here package for path management
 
 # Read in all the trees
-tt <- list.files(here("simulationtrees"), pattern="extant", full.names=TRUE)
+tt <- list.files(ts_here("simulationtrees"), pattern="extant", full.names=TRUE)
 tt <- tt[sample(1:length(tt), length(tt))]
 tt2 <- gsub("lexicon_families", "lexiconfamilies", tt)
 tt2 <- read.table(text=tt2, sep="_")
@@ -42,7 +44,7 @@ for (ii in 1:length(tt)){
   
     # Check if done
     if(paste0("summary_", res1$group, "_", res1$num, "_", res1$type, ".csv") %in% 
-       list.files(here("summary_sim"), pattern="summary", full.names=FALSE)) {next}
+       list.files(ts_here("summary_sim"), pattern="summary", full.names=FALSE)) {next}
     
     # Tree length
     res1$tree_length <- sum(tree$edge.length, na.rm=TRUE)
@@ -97,7 +99,7 @@ for (ii in 1:length(tt)){
     }
   
     # Write results
-    write.csv(res1, file=here("summary_sim", paste0("summary_", res1$group, "_", res1$num, "_", res1$type, ".csv")))
+    write.csv(res1, file=ts_here("summary_sim", paste0("summary_", res1$group, "_", res1$num, "_", res1$type, ".csv")))
   
 } # End ii trees
 

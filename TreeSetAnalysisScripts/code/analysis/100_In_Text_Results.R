@@ -1,4 +1,23 @@
-#ARTUR - retrieval of data to input in the manuscript
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
+# ------------------------------------------------------------------------------#
+#                           In-Text Results Summaries                            #
+# ------------------------------------------------------------------------------#
+# Purpose:
+#   Extract compact summary statistics used directly in the manuscript text from
+#   the main TreeSet outputs.
+#
+# Main tasks:
+# - summarise global and regional tree statistics from outputs/All_Trees_Summary.csv
+# - summarise tip-age distributions from all_trees_global/
+# - summarise diversification-rate ranges from summary/*.csv
+#
+# Outputs:
+# - outputs/in_text_data/summary_tree_stats.csv
+# - outputs/in_text_data/summary_ages.csv
+# - outputs/in_text_data/Global_trees_summary.csv
+# - outputs/in_text_data/DR_rates_across_tips.csv
+# ------------------------------------------------------------------------------#
 
 # Load the necessary libraries
 library(tidyverse)
@@ -26,7 +45,7 @@ results_list <- list()
 
 # Variables to analyze
 variables <- c("tree_length", "crown_age")
-df <- read.csv(here("outputs","All_Trees_Summary.csv"))
+df <- read.csv(ts_here("outputs","All_Trees_Summary.csv"))
 # Iterate over variables and groups
 
 for (var in variables) {
@@ -65,22 +84,11 @@ results_df <- do.call(rbind, results_list)
 print(results_df)
 
 # Save the results to a CSV file if needed
-write.csv(results_df, here("outputs","in_text_data", "summary_tree_stats.csv"), row.names = FALSE)
+write.csv(results_df, ts_here("outputs","in_text_data", "summary_tree_stats.csv"), row.names = FALSE)
 
 # Summarise tip ages  ----------------------------------------------------- 
-# Define dataset source ("old" or "new")
-tree_set <- "new"  # Change to "new" if needed
-
-# Set folder and output filename based on tree_set
-if (tree_set == "old") {
-  folder_path <- here("input_data", "all_trees")
-  output_file <- "summary_ages_old_trees.csv"
-} else if (tree_set == "new") {
-  folder_path <- here("all_trees_global")
-  output_file <- "summary_ages_new_trees.csv"
-} else {
-  stop("Invalid tree_set value. Use 'old' or 'new'.")
-}
+folder_path <- ts_here("all_trees_global")
+output_file <- "summary_ages.csv"
 
 # Get tree files from the specified folder
 tree_files <- list.files(folder_path, pattern = "\\.tree$", full.names = TRUE)
@@ -169,32 +177,13 @@ print(round(summary_lang_ages,1))
 # Save summary to CSV
 write.csv(
   summary_lang_ages,
-  file = here("outputs","in_text_data", output_file),
+  file = ts_here("outputs","in_text_data", output_file),
   row.names = FALSE
 )
 
-# ========================================================================== #
-
-# Description:
-# This R script processes and analyzes summary statistics for growth rates (median, minimum, and maximum) across tree species.
-# It consolidates data from multiple CSV files stored in the 'summary_ARTUR' directory, merging them into a single dataset.
-# The script computes key descriptive statistics such as median and mean values for each growth rate metric.
-# Additionally, it calculates 95% Highest Density Posterior Intervals (HDPI) for each metric using the 'coda' package.
-
-# Key Steps:
-# 1. Import necessary libraries and set up paths to input and output files.
-# 2. Load and combine data from multiple summary files into a unified data table.
-# 3. Compute median and mean values for growth rates across datasets.
-# 4. Use Bayesian analysis with the 'coda' package to estimate 95% HDPI intervals.
-# 5. Generate summary tables and export results to CSV files for further analysis.
-
-# Outputs:
-# 1. Combined dataset saved as 'Global_trees_summary_ARTUR.csv'.
-# 2. Statistical summaries including medians and 95% HDPI intervals saved as 'DR_rates_across_tips.csv'.
-
 # 1. List all summary files
 files <- list.files(
-  path = here("summary"),
+  path = ts_here("summary"),
   pattern = "^summary_.*\\.csv$",
   full.names = TRUE
 )
@@ -205,7 +194,7 @@ df_all <- rbindlist(lapply(files, fread))
 # 3. Inspect
 dim(df_all)
 df_global = df_all %>% filter(type=="all")
-#write.csv(df_global, file = here("outputs", "Global_trees_summary.csv"), row.names = FALSE)
+write.csv(df_global, file = ts_here("outputs", "in_text_data", "Global_trees_summary.csv"), row.names = FALSE)
 
 # Median/Mean Median
 median(df_all$medianDR)
@@ -267,7 +256,7 @@ summary_table_coda <- data.frame(
 )
 
 print(summary_table_coda)
-#write.csv(summary_table_coda, file = here("outputs","in_text_data","DR_rates_across_tips.csv"), row.names = FALSE)
+write.csv(summary_table_coda, file = ts_here("outputs","in_text_data","DR_rates_across_tips.csv"), row.names = FALSE)
 
 # Family-specifci DF rates factors ----------------------------------------------
 
@@ -302,5 +291,3 @@ fam_tree_min_max_sum <- fam_tree_min_max %>%
 
 # 3. Compute the median of the mean ratios across families
 median(fam_tree_min_max_sum$mean_ratio)
-
-

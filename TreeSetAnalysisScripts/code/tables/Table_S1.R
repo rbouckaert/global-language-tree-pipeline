@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # Load the necessary libraries
 library(tidyverse)
 library(readxl)
@@ -25,12 +27,12 @@ library(rnaturalearth)
 ## Get data  --------------------------------------/
 
 # Load ED scores
-EDGE2 <- read.csv(here("outputs","EDGEscores", "ALL_ED_wTREES.csv"))
+EDGE2 <- read.csv(ts_here("outputs","EDGEscores", "ALL_ED_wTREES.csv"))
 
 tmp = EDGE2 %>% group_by(glottocode) %>% summarise(ED = mean(ED, na.rm = TRUE))
 
 # Load country codes
-res5 <- read.csv(file = here("input_data", "languages_and_dialects_geoFINALupdates6.csv"))
+res5 <- read.csv(file = ts_here("input_data", "languages_and_dialects_geoFINALupdates6.csv"))
 res5$glottocode[res5$glottocode=="osse1243"] <- "iron1242"
 
 ## Incorporate tree-to-tree uncertainty ----- ##
@@ -75,7 +77,7 @@ ed_country_uncertainty <- ed_country_uncertainty %>%
   select(-langs)
 
 # Save the results to a CSV file if needed
-write.csv(ed_country_uncertainty, here("outputs","Table_S1", "summed_EqSplits_ED_per_country_TabS1_v2.csv"), row.names = FALSE)
+write.csv(ed_country_uncertainty, ts_here("outputs","Table_S1", "summed_EqSplits_ED_per_country_TabS1_v2.csv"), row.names = FALSE)
 
 
 #------------------------------------------------------------------------------#
@@ -88,13 +90,13 @@ library(countrycode)
 library(rnaturalearth)  # For ne_countries()
 
 # Load tree-specific ED scores
-EDGE2 <- read.csv(here("outputs","EDGEscores", "ALL_ED_wTREES.csv"))
+EDGE2 <- read.csv(ts_here("outputs","EDGEscores", "ALL_ED_wTREES.csv"))
 
 # Correct glottocode if needed
 EDGE2$glottocode[EDGE2$glottocode == "osse1243"] <- "iron1242"
 
 # Load language spatial data (centroids)
-langa <- read.csv(here("input_data", "languages_and_dialects_geoFINALupdates6.csv"),
+langa <- read.csv(ts_here("input_data", "languages_and_dialects_geoFINALupdates6.csv"),
                   stringsAsFactors = FALSE)
 langa <- langa[!is.na(langa$latitude) & !is.na(langa$longitude), ]
 langa$glottocode[langa$glottocode == "osse1243"] <- "iron1242"
@@ -157,5 +159,5 @@ print(ed_country_uncertainty)
 
 # Save the results if desired
 write.csv(ed_country_uncertainty,
-          here("outputs","Table_S1","TableS1_ED_per_country_centroids_SD.csv"),
+          ts_here("outputs","Table_S1","TableS1_ED_per_country_centroids_SD.csv"),
           row.names = FALSE)

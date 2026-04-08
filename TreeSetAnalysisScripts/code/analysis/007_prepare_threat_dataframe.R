@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 #-------------------------------------------------------------------------------#
 #                     Threat Data Preparation Script                            #
 #-------------------------------------------------------------------------------#
@@ -39,7 +41,7 @@ library(rworldmap)  # For world map data
 wrld_simpl2 <- getMap()
 
 # Load main language data file
-res5 <- fread(file = here("input_data", "languages_and_dialects_geoFINALupdates6.csv"))
+res5 <- fread(file = ts_here("input_data", "languages_and_dialects_geoFINALupdates6.csv"))
 # Adjust subsistence index (0-based to 1-based conversion)
 res5$`DPLACE subsistence` <- res5$`DPLACE subsistence` - 1
 
@@ -60,7 +62,7 @@ res5[, "REGION" := GEO3major]
 res5[, "SUBREGION" := IMAGE24]
 
 # Load island data and determine which languages are on islands
-load(file = here("input_data", "islands_transformed.r"))
+load(file = ts_here("input_data", "islands_transformed.r"))
 bi2$dummy <- 1
 rr3 <- over(rr, bi2)
 rr3$dummy[is.na(rr3$dummy)] <- 0
@@ -73,7 +75,7 @@ setkey(res5, iso_final)
 #                        Merge Threat Data                                      #
 #-------------------------------------------------------------------------------#
 # Load threat assessment data
-lang_threat <- fread(here("input_data", "threat_data1.csv"))
+lang_threat <- fread(ts_here("input_data", "threat_data1.csv"))
 setkey(lang_threat, "ISO")
 
 # Filter to 40-year projection
@@ -90,7 +92,7 @@ setkey(res5, ISO)
 #                     Add Language Area Information                             #
 #-------------------------------------------------------------------------------#
 # Load language shape files
-langa <- readOGR(here("input_data", "langa", "langa.shp"), "langa")
+langa <- readOGR(ts_here("input_data", "langa", "langa.shp"), "langa")
 
 # Extract shape data
 langa_data <- setDT(langa@data)
@@ -131,4 +133,4 @@ res5$threat_glot <- as.numeric(res5$threatn2)
 #                     Export Processed Dataset                                  #
 #-------------------------------------------------------------------------------#
 # Write the final processed dataframe to CSV
-write.csv(res5, file = here("input_data", "processed_threat_data_frame.csv"))
+write.csv(res5, file = ts_here("input_data", "processed_threat_data_frame.csv"))

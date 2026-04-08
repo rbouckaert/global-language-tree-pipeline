@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # ------------------------------------------------------------------------------#
 #            Urban Spatial and Environmental Data Processing              ----
 # ------------------------------------------------------------------------------#
@@ -65,7 +67,7 @@ template <- raster(
 
 ### read in SEDAC cities data
 cites <- read.csv(
-  here(
+  ts_here(
     "input_data",
     "urbanspatial-hist-urban-pop-3700bc-ad2000-xlsx.csv"
   ),
@@ -102,7 +104,7 @@ for (j in 1:(length(cyears2) - 1)) {
 # read in language data as points or polygons
 # points
 if (type1 == "points") {
-  langa <- read.csv(here("input_data", "languages_and_dialects_geoFINALupdates6.csv"),
+  langa <- read.csv(ts_here("input_data", "languages_and_dialects_geoFINALupdates6.csv"),
                     stringsAsFactors = FALSE)
   langa <- langa[!is.na(langa$latitude) & !is.na(langa$longitude), ]
   coordinates(langa) <- ~ longitude + latitude
@@ -111,7 +113,7 @@ if (type1 == "points") {
 # polygons
 ### language shapefiles
 if (type1 == "polys") {
-  langa <- st_read(here("input_data", "langa", "langa.shp")) |>
+  langa <- st_read(ts_here("input_data", "langa", "langa.shp")) |>
     st_make_valid() |>              # repair any self-intersections
     st_cast("MULTIPOLYGON")         # ensure polygon type only
   if (is.na(st_crs(langa))) {
@@ -124,7 +126,7 @@ if (type1 == "polys") {
 # ------------------------------------------------------------------------------#
 
 ## Read in Temperature Data ----------------
-temp1 <- stack(list.files(here("input_data", "temp_data_10000BC"), full.names = TRUE))
+temp1 <- stack(list.files(ts_here("input_data", "temp_data_10000BC"), full.names = TRUE))
 projection(temp1) <- projection(raster())
 temp2 <- (temp1)
 
@@ -132,13 +134,13 @@ temp2 <- (temp1)
 
 
 ## Read in Friction Surface Data ----------------
-fric1 <- stack(c(here("input_data", "2020_walking_only_friction_surface",
+fric1 <- stack(c(ts_here("input_data", "2020_walking_only_friction_surface",
                       "2020_walking_only_friction_surface.geotiff")))
 projection(fric1) <- projection(raster())
 
 
 ## Read in Population Data ----------------
-gpop2 <- raster::stack(list.files(here("input_data", "baseline", "zip"), 
+gpop2 <- raster::stack(list.files(ts_here("input_data", "baseline", "zip"), 
                                   pattern = "popd", full.names = TRUE))
 projection(gpop2) <- projection(raster())
 
@@ -156,7 +158,7 @@ trim_mean_layer <- function(values, coverage_fractions) {
 # ------------------------------------------------------------------------------#
 #                      Extract Environmental Variables                   ----
 # ------------------------------------------------------------------------------#
-a = read.csv(here("outputs", "glotto_languages_cites_states3.csv"))
+a = read.csv(ts_here("outputs", "glotto_languages_cites_states3.csv"))
 
 ## extract data per language
 if (class(langa)[1] == "SpatialPolygonsDataFrame") {
@@ -204,13 +206,13 @@ if (class(langa)[1] == "SpatialPolygonsDataFrame") {
   
   write.csv(
     glot2,
-    here("outputs", "fixed", "glotto_languages_cites_states3.csv"),
+    ts_here("outputs", "glotto_languages_cites_states3.csv"),
     row.names = FALSE
   )
   
   write.csv(
     cbind(langa_df, friction = langa$friction),
-    here("outputs", "fixed", "mean_frictionpoly.csv"),
+    ts_here("outputs", "mean_frictionpoly.csv"),
     row.names = FALSE
   )
   
@@ -243,12 +245,12 @@ if (class(langa)[1] == "SpatialPolygonsDataFrame") {
   langa@data$friction <- mean_friction$mean_friction
 
   ## Write Out Mean Friction Data
-  write.csv(cbind(langa@data, mean_friction), here("outputs","fixed", "mean_frictionpoints.csv"))
+  write.csv(cbind(langa@data, mean_friction), ts_here("outputs","mean_frictionpoints.csv"))
 
   ## Combine All Data Together
   glot2 <- cbind(langa@data, distance_to_city, 
                  temp_at_location, popn_at_location)
-  write.csv(glot2, here("outputs","fixed", "glotto_languages_cites_states3points.csv"))
+  write.csv(glot2, ts_here("outputs","glotto_languages_cites_states3points.csv"))
 }
 
 # ------------------------------------------------------------------------------#
@@ -258,12 +260,12 @@ if (class(langa)[1] == "SpatialPolygonsDataFrame") {
 ## Read in Processed Data ----------------
 # Points
 if (type1 == "points") {
-  glot3 <- fread(here("outputs","fixed", "glotto_languages_cites_states3points.csv"))
+  glot3 <- fread(ts_here("outputs","glotto_languages_cites_states3points.csv"))
 }
 
 # Language shapefiles
 if (type1 == "polys") {
-  glot3 <- fread(here("outputs","fixed", "glotto_languages_cites_states3.csv"))
+  glot3 <- fread(ts_here("outputs","glotto_languages_cites_states3.csv"))
 }
 
 ## Identify Time Variable Columns
@@ -306,11 +308,11 @@ print(length(unique(DT1$Time3)))
 
 ### write to file
 if (type1 == "points") {
-  fwrite(DT1, file = here("outputs","fixed", "interim_env_datapoints_points.csv"))
-  DT1 <-fread(file = here("outputs","fixed", "interim_env_datapoints_points.csv"))
+  fwrite(DT1, file = ts_here("outputs","interim_env_datapoints_points.csv"))
+  DT1 <-fread(file = ts_here("outputs","interim_env_datapoints_points.csv"))
 } else {
-  fwrite(DT1, file = here("outputs","fixed", "interim_env_datapoints.csv"))
-  DT1 <- fread(file = here("outputs","fixed", "interim_env_datapoints.csv"))
+  fwrite(DT1, file = ts_here("outputs","interim_env_datapoints.csv"))
+  DT1 <- fread(file = ts_here("outputs","interim_env_datapoints.csv"))
 }
 
 ## Rename Language Identifier ----------------
@@ -355,13 +357,13 @@ dt4<-dt4[DT3]
 ## Write Final Environmental Data ----------------
 # Points
 if (type1 == "points") {
-  fwrite(dt4, file = here("input_data","fixed", "final_env_datapoints.csv"))
+  fwrite(dt4, file = ts_here("input_data","final_env_datapoints.csv"))
 }
 
 # Language Shapefiles
 if (type1 == "polys") {
-  fwrite(dt4, file = here("input_data","fixed", "final_env_data.csv"))
-  dt4 <- fread(here("input_data","fixed", "final_env_data.csv"))
+  fwrite(dt4, file = ts_here("input_data","final_env_data.csv"))
+  dt4 <- fread(ts_here("input_data","final_env_data.csv"))
   sum(!unique(dt4$LANG_IS) %in% unique(lang1$iso639P3code))
 }
 
@@ -371,7 +373,7 @@ if (type1 == "polys") {
 
 ## Read in Additional Language Data ----------------
 # add glott0
-lang1 <- fread(here("input_data", "languoid.csv"), stringsAsFactors = FALSE)
+lang1 <- fread(ts_here("input_data", "languoid.csv"), stringsAsFactors = FALSE)
 lang1 <- lang1[!is.na(lang1$iso639P3code) & lang1$iso639P3code != "", ]
 setkey(lang1, "iso639P3code")
 
@@ -382,7 +384,7 @@ setkey(dt4, "LANG_IS")
 dt5 <- lang1[dt4]
 
 ## Add glott2 data
-lang2 <- fread(here("input_data","languages_and_dialects_geoNEW.csv"), stringsAsFactors = FALSE)
+lang2 <- fread(ts_here("input_data","languages_and_dialects_geoNEW.csv"), stringsAsFactors = FALSE)
 setkey(lang2, "glottocode")
 
 ## Set Key for Joined Data
@@ -396,10 +398,10 @@ dt6[, id := glottocode]
 ## Merge with Ethno Data
 setkey(dt6, iso639P3code)
 
-fwrite(dt6, file = here("input_data", "fixed", "final_env_data_glot.csv"))
+fwrite(dt6, file = ts_here("input_data", "final_env_data_glot.csv"))
 
 ## Read in Language Shapefiles
-langa <- st_read(here("input_data","langa", "langa.shp"), "langa")
+langa <- st_read(ts_here("input_data","langa", "langa.shp"), "langa")
 
 ## Aggregate Area Data
 langa_data <- setDT(langa@data)
@@ -446,5 +448,5 @@ dt7 <- rbindlist(list(dt_fam, dt_area, dt_all), use.names = TRUE)
 #                             Write Final Outputs                          ----
 # ------------------------------------------------------------------------------#
 
-fwrite(dt6, file = here("outputs", "all_tips_by_year_ethno.csv"))
-fwrite(dt7, file = here("outputs", "env_by_year_by_fam_area_all_ethno.csv"))
+fwrite(dt6, file = ts_here("outputs", "all_tips_by_year_ethno.csv"))
+fwrite(dt7, file = ts_here("outputs", "env_by_year_by_fam_area_all_ethno.csv"))

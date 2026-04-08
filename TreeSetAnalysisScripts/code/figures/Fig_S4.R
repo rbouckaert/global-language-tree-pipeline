@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # -----------------------------------------------------------------------------|
 
 library(ggplot2)
@@ -10,11 +12,11 @@ library(here)
 
 # -----------------------------------------------------------------------------|
 # 1) Slopes across models removing specific regions ----
-results_folder = "regression_results_regions_fixed"
+results_folder = ts_here("regression_results_regions")
 
 # List all files matching "regressions25" pattern
-files <- list.files(here(results_folder), pattern="regressions25", full.name=TRUE)
-files2 <- list.files(here(results_folder), pattern="regressions25", full.name=TRUE)
+files <- list.files(results_folder, pattern="regressions25", full.name=TRUE)
+files2 <- list.files(results_folder, pattern="regressions25", full.name=TRUE)
 
 my_levels <- c("Human Pop. Density","Landscape Friction", "Mean Spoken Area",
                "Distance to City", "Prop. Island Languages")
@@ -94,11 +96,11 @@ res3x$name <- factor(res3x$name,
 # -----------------------------------------------------------------------------|
 # 2) Slopes across models without kfolding  ----
 # -----------------------------------------------------------------------------|
-results_folder = "regression_results_fin_log"
+results_folder = ts_here("regression_results_fin_log")
 
 # List all files matching "regressions25" pattern
-files <- list.files(here(results_folder), pattern="regressions25", full.name=TRUE)
-files2 <- list.files(here(results_folder), pattern="regressions25", full.name=TRUE)
+files <- list.files(results_folder, pattern="regressions25", full.name=TRUE)
+files2 <- list.files(results_folder, pattern="regressions25", full.name=TRUE)
 
 my_levels <- c("Human Pop. Density","Landscape Friction", "Mean Spoken Area",
                "Distance to City", "Prop. Island Languages")
@@ -236,10 +238,10 @@ dists <- ggplot(
         legend.margin = margin(10,0,0,0))
 
 plot(dists)
-ggsave(here("outputs", "Fig_S4", "FigS4_4250_fixed_20Sep2025.png"), plot = dists,
+ggsave(ts_here("outputs", "Fig_S4", "FigS4_4250_fixed_20Sep2025.png"), plot = dists,
        width = 5.5, height = 6, units = "in", dpi = 600,
        scale = 1.1)
 
-ggsave(here("outputs", "Fig_S4", "FigS4_4250_fixed_20Sep2025.pdf"), plot = dists,
+ggsave(ts_here("outputs", "Fig_S4", "FigS4_4250_fixed_20Sep2025.pdf"), plot = dists,
        width = 5.5, height = 6, units = "in", dpi = 600,
        scale = 1.1)

@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # Script: 013_language_analysis_bisse12b.R
 # Description: Runs BiSSE (Bifurcating Speciation and Extinction) and HiSSE (Heterogeneous
 # Speciation and Extinction) analyses on phylogenetic trees.
@@ -24,10 +26,10 @@ library(data.table)
 library(here) # Added here package for path management
 
 # CutD function
-source(here("code", "AUX2_traitDependent_functions.R"))
+ts_source("code", "analysis", "AUX2_traitDependent_functions.R")
 
 # Read data file
-res5 <- fread(file = here("input_data", "bisse_data_in.csv"))
+res5 <- fread(file = ts_here("input_data", "bisse_data_in.csv"))
 
 # Correct ossetic
 res5$Glottocode [ res5$Glottocode =="osse1243"]<-"iron1242" 
@@ -43,10 +45,10 @@ res5$Forager[res5$Forager_language_possible==1]<-1
 cols1<-c("Marriage_Exogamous","Forager","EA033_Extended")#names(res5)[c(9,11,106,107)]
 
 # Read in trees
-tt0 <- list.files(here("all_trees"), full.names = TRUE)
+tt0 <- list.files(ts_here("all_trees"), full.names = TRUE)
 
 # Tree name
-tt2a <- list.files(here("all_trees"), full.names = FALSE)
+tt2a <- list.files(ts_here("all_trees"), full.names = FALSE)
 tt2a <- gsub(".tree", "", tt2a)
 tt2a <- gsub("lexicon_families", "lexiconfamilies", tt2a)
 tt3a <- read.table(text = tt2a, sep = "_")
@@ -71,7 +73,7 @@ tt3<-tt3[sam1,]
 tt2<-tt2[sam1]
 
 # One to drop
-drop_cont<-read.csv(file=here("input_data", "tips_by_continent.csv"))
+drop_cont<-read.csv(file=ts_here("input_data", "tips_by_continent.csv"))
 
 # Start loop
 ii=1
@@ -84,7 +86,7 @@ for( ii in ii:length(tt)){
   
   # Check if done
   if(paste("es4_", tt2[[ii]], "_", regs1, "_BISSE_runs3.csv", sep = "") %in% 
-     list.files(here("BISSE_runs"), full.names = FALSE)) {next}
+     list.files(ts_here("BISSE_runs"), full.names = FALSE)) {next}
   
   # Read tree
   tree<-ape::read.tree(tt[ii])
@@ -195,7 +197,7 @@ for( ii in ii:length(tt)){
   
   
   
-  write.csv(res2, file = here("BISSE_runs", paste0("es4_", tt2[[ii]], "_", regs1, "_BISSE_runs3.csv")), row.names = FALSE)  
+  write.csv(res2, file = ts_here("BISSE_runs", paste0("es4_", tt2[[ii]], "_", regs1, "_BISSE_runs3.csv")), row.names = FALSE)  
    
   print(ii)
 } #ii

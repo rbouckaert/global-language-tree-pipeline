@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # Table S2 generation script
 
 # 0. Load libraries
@@ -6,13 +8,13 @@ library(here)
 library(magrittr)
 
 # 1. Load and summarise ED data -----------------------------------------------
-all_ed <- read.csv(here("outputs", "EDGEscores", "ALL_ED_wTREES.csv")) %>%
+all_ed <- read.csv(ts_here("outputs", "EDGEscores", "ALL_ED_wTREES.csv")) %>%
   mutate(glottocode = if_else(glottocode == "osse1243", "iron1242", glottocode)) %>%
   group_by(glottocode) %>%
   summarise(ED_mean = mean(ED), .groups = "drop")
 
 # 2. Load Glottolog 4.0 families ----------------------------------------------
-lg <- read.csv(here("outputs", "Table_S2", "languoid40.csv"))
+lg <- read.csv(ts_here("outputs", "Table_S2", "languoid40.csv"))
 
 lg = lg %>%
   transmute(
@@ -34,11 +36,11 @@ lang_ed <- all_ed %>%
   )
 
 # 4. Load threat data ----------------------------------------------------------
-threat <- read.csv(here("input_data", "processed_threat_data_frame.csv")) %>%
+threat <- read.csv(ts_here("input_data", "processed_threat_data_frame.csv")) %>%
   mutate(glottocode = if_else(glottocode == "osse1243", "iron1242", glottocode))
 
 # 5. Load top EDGE languages----------------------------------------------------
-edge_top <- read.csv(here("outputs", "EDGEscores", "NEW_EDGE_top_100.csv")) %>%
+edge_top <- read.csv(ts_here("outputs", "EDGEscores", "NEW_EDGE_top_100.csv")) %>%
   rename(glottocode = Group.1) %>%
   mutate(glottocode = if_else(glottocode == "osse1243", "iron1242", glottocode))
 
@@ -63,14 +65,14 @@ table_s2 <- edge_top %>%
 
 # 7. Write output ------------------------------------------------------------
 write.csv(table_s2,
-          here("outputs", "Table_S2", "S2_New.csv"),
+          ts_here("outputs", "Table_S2", "S2_New.csv"),
           row.names = FALSE)
 
 tables2_final = table_s2 %>% select(-family_name, -family_id_4, -fam_size, -True_Isolate, -Effective_Isolate)
 tables2_final %<>% select(name, glottocode,status, ED, EDGE, EDGErank, glottolog_macroarea, Language_Isolate)
 
 write.csv(tables2_final,
-          here("outputs", "Table_S2", "TableS2_New_final.csv"),
+          ts_here("outputs", "Table_S2", "TableS2_New_final.csv"),
           row.names = FALSE)
 
 # 8. Quick summary checks ----------------------------------------------------

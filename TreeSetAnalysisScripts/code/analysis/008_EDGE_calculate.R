@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 #-------------------------------------------------------------------------------#
 #                    EDGE Score Calculation Script                              #
 #-------------------------------------------------------------------------------#
@@ -37,16 +39,16 @@ library(here)       # For file path management
 #                       Source External Functions                               #
 #-------------------------------------------------------------------------------#
 # EDGE2 calculation function written by Rikki Gumbs
-source(here("code", "analysis", "EDGE2.R"))
+ts_source("code", "analysis", "EDGE2.R")
 
 #-------------------------------------------------------------------------------#
 #                       Load and Prepare Input Data                             #
 #-------------------------------------------------------------------------------#
 # Read in all phylogenetic trees
-tree_files <- list.files(here("all_trees"), pattern="Global", full.names=TRUE)
+tree_files <- list.files(ts_here("all_trees"), pattern="Global", full.names=TRUE)
 
 # Load prepared language threat data
-threat_data <- fread(file=here("input_data", "processed_threat_data_frame.csv"))
+threat_data <- fread(file=ts_here("input_data", "processed_threat_data_frame.csv"))
 
 # Subset needed columns for EDGE calculation
 # - glottocode: Language identifier
@@ -125,7 +127,7 @@ for (i in 1:(length(tree_files))) {
   pd_output_file <- gsub(".csv", "_PDLOST2.csv", edge_output_file, fixed=TRUE)
   
   # Skip if output file already exists
-  if(edge_output_file %in% list.files(here("EDGE_scores"), full.names=TRUE)) {
+  if(edge_output_file %in% list.files(ts_here("EDGE_scores"), full.names=TRUE)) {
     next
   }
 

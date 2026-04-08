@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # ------------------------------------------------------------------------------#
 #                              Tree Simulations               ----
 # Input data:
@@ -42,7 +44,7 @@ library(data.table)
 #                             Setup Cluster                      ----
 # ------------------------------------------------------------------------------#
 ## Get group names
-all_conts <- read.csv(file = here("input_data", "groups_data1.csv"))[, "x"]
+all_conts <- read.csv(file = ts_here("input_data", "groups_data1.csv"))[, "x"]
 
 ## Make cluster
 cl <- makeCluster(10)
@@ -58,15 +60,15 @@ foreach(ii = 1:length(all_conts),
         kk <- ii # sample(1:length(all_conts),1)
 
   ## Only do if not there
-  if (paste(here("simulationtrees", paste("simulation_trees_ltt_",
+  if (paste(ts_here("simulationtrees", paste("simulation_trees_ltt_",
                                           all_conts[kk], "_1.tre", sep = "")),
                                           sep = "") %in%
-      list.files(here("simulationtrees"), full.names = TRUE)) {
+      list.files(ts_here("simulationtrees"), full.names = TRUE)) {
     return()
   }
 
   ## Get Trees
-  tt <- list.files(here("all_trees"), pattern = all_conts[kk], full.names = TRUE)
+  tt <- list.files(ts_here("all_trees"), pattern = all_conts[kk], full.names = TRUE)
 
   ### Create n random trees
   trees <- NULL
@@ -111,11 +113,11 @@ foreach(ii = 1:length(all_conts),
     ## Write tree
     if (rr == maxt) {
       rnum <- 1
-      write.tree(tr, file = here("simulationtrees", 
+      write.tree(tr, file = ts_here("simulationtrees", 
                                   paste("simulation_trees_extant_", 
                                   all_conts[kk], "_1.tre", sep = "")))
         } else {
-      write.tree(tr, file = here("simulationtrees",
+      write.tree(tr, file = ts_here("simulationtrees",
                                  paste("simulation_trees_extant_", 
                                  all_conts[kk], "_", rnum, ".tre", sep = "")))
         }
@@ -133,7 +135,7 @@ foreach(ii = 1:length(all_conts),
                          p = ltt1$p, max_height = max(nodeHeights(tr)), type = "simulation")
 
     ## Write table
-    write.csv(resx1, file = here("simulationtrees",
+    write.csv(resx1, file = ts_here("simulationtrees",
                                 paste("simulation_trees_ltt_", 
                                 all_conts[kk], "_", rnum, ".tre", sep = "")))
 

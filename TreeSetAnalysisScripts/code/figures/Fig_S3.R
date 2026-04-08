@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # ------------------------------------------------------------------
 # Figure S3: Clade Counts and Variance over Time
 # ------------------------------------------------------------------
@@ -10,7 +12,7 @@ library(coda)
 treeset <- "new"
 
 # 1) Set the path and pattern based on treeset
-data_path   <- here('outputs', 'new_trees_sliced')
+data_path   <- ts_here('outputs', 'new_trees_sliced')
 file_pattern <- "_clade_counts\\.csv$"
 
 # 2) List all relevant CSV files
@@ -166,7 +168,7 @@ file_prefix <- ("new_trees")
 # Save the plot as a high-quality PNG
 ggsave(
   
-  filename = here("outputs","Fig_S3","Fig_S3.png"),
+  filename = ts_here("outputs","Fig_S3","Fig_S3.png"),
   plot = p,
   width = 15.92 / 2.54,           # Convert cm to inches
   height = 9.56 / 2.54,           # Convert cm to inches
@@ -176,7 +178,7 @@ ggsave(
 
 # Save the plot as a high-quality PDF
 ggsave(
-  filename = here("outputs","Fig_S3","Fig_S3.pdf"),
+  filename = ts_here("outputs","Fig_S3","Fig_S3.pdf"),
   plot = p,
   width = 15.92 / 2.54,
   height = 9.56 / 2.54,

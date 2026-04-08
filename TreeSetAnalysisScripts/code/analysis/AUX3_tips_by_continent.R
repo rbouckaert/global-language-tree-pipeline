@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 
 ##Setting up a BiSSE model using HiSSE - (all from https://cran.r-project.org/web/packages/hisse/vignettes/hisse-new-vignette.pdf)
 
@@ -14,8 +16,8 @@ library(data.table)
 library(rgdal)
 library(sp)
 
-### setwd
-setwd("C:\\Users\\xxxx\\Documents\\")
+### This helper relies on `tt3` and `tt` already being in memory.
+### Avoid changing the working directory; write outputs relative to TreeSetAnalysisScripts.
 
 tt3a<-cbind(tt3,tt)
 
@@ -38,5 +40,5 @@ table(res2$group)
 res2$group[res2$group=="North-America"]<-"America"
 res2$group[res2$group=="South-America"]<-"America"
 
-write.csv(res2,file=".\\input_data\\tips_by_continent.csv")
+write.csv(res2, file = ts_here("input_data", "tips_by_continent.csv"))
 

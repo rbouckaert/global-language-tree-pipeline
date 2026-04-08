@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # Code to generate figure 1 data plot
 
 # Files and folders read or loaded:
@@ -15,7 +17,7 @@ pacman::p_load(ggplot2, cowplot, data.table, aplot, here, patchwork, magick)
 # 1) Load data ----
 # -----------------------------------------------------------------------------|
 
-env_data<-fread(here("input_data",'fixed', "final_env_datapoints.csv"))
+env_data<-fread(ts_here("input_data", "final_env_datapoints.csv"))
 
 env_data$LANG_IS[env_data$LANG_IS=="osse1243"]<-"iron1242"
 
@@ -24,11 +26,11 @@ env_data2<-env_data[env_data$Time3 ==max(env_data$Time3),]
 row.names(env_data2)<-env_data2$LANG_IS
 
 # Get regional order
-ord1<-read.table(file=here("input_data","taxonorder-left-to-right.txt"),
+ord1<-read.table(file=ts_here("input_data","taxonorder-left-to-right.txt"),
                  stringsAsFactors = FALSE)
 
 # Read the file, treating each line as one row
-data <- fread(here("outputs", "taxonorder5.txt"), header = FALSE)
+data <- fread(ts_here("outputs", "taxonorder5.txt"), header = FALSE)
 
 # Flatten the data, if values are space-separated in a single row
 values <- unlist(strsplit(as.character(unlist(data)), "\\s+")) # Splits by any whitespace
@@ -41,7 +43,7 @@ env_data6<-env_data2
 setkey(env_data6,LANG_IS)
 
 # Load up tip data
-res5<-fread(file=here("input_data", "bisse_data_in.csv"))
+res5<-fread(file=ts_here("input_data", "bisse_data_in.csv"))
 setkey(res5,Glottocode)
 res6<-env_data6[res5]
 setkey(res6,LANG_IS)
@@ -124,15 +126,15 @@ subplot_C <- area1 %>%
   insert_top(popd1) %>% insert_top(island1)
 
 # Save the plot using ggsave
-# ggsave(filename = here("outputs", "Fig_1C.pdf"),  # File path
+# ggsave(filename = ts_here("outputs", "Fig_1C.pdf"),  # File path
 #        plot = subplot_C, height = 6, width = 14, units = "in")
 # 
-# ggsave(filename = here("outputs", "Fig_1C.png"),  # File path
+# ggsave(filename = ts_here("outputs", "Fig_1C.png"),  # File path
 #        plot = subplot_C, height = 6, width = 14, units = "in")
 
 
 # Load the PNG image using magick
-image <- image_read(here("input_data", "edge6636-densitree5cropped_cleaned.png"))
+image <- image_read(ts_here("input_data", "edge6636-densitree5cropped_cleaned.png"))
 
 # Convert the image to a raster object
 raster_image <- grid::rasterGrob(image, interpolate = TRUE)
@@ -190,7 +192,7 @@ final_plot <- plot_spacer()+ subplot_A +
 # -----------------------------------------------------------------------------|
 # 4) Subplot B -------------------------------------------------------------------
 # -----------------------------------------------------------------------------|
-ltt1 = read.csv(here("outputs","Fig_1","LTT_Plot1_Data.csv"))
+ltt1 = read.csv(ts_here("outputs","Fig_1","LTT_Plot1_Data.csv"))
 
 # Force 'cont' into a factor with the levels in the desired order:
 ltt1$cont <- factor(ltt1$cont,
@@ -211,7 +213,7 @@ p4<-ggplot(ltt1[,], aes(y=logltt,x=times,col=cont,group=tree_id_1_901))+
   ylab("Lineages (log)")+ 
   xlab("Years Ago (KY)")
   
-ggsave(here("outputs","Fig_1","LTT_Plot1_2.png"),plot=p4,height=6,width=12, dpi=600)
+ggsave(ts_here("outputs","Fig_1","LTT_Plot1_2.png"),plot=p4,height=6,width=12, dpi=600)
 
 # -----------------------------------------------------------------------------|
 # 5) Incorpotate subplot B into final_plot top right corner-----------------
@@ -222,7 +224,7 @@ final_plot_inset <- ggdraw() +
   draw_plot(p4, 0.48, 0.74, 0.5, 0.25)  # Smaller inset at top-right
 
 # ggsave(
-#   filename = here("outputs","Fig_1", paste0("figure_with_inset_cowplot_", sample(1:10000, 1), ".png")),
+#   filename = ts_here("outputs","Fig_1", paste0("figure_with_inset_cowplot_", sample(1:10000, 1), ".png")),
 #   plot     = final_plot_inset,
 #   height   = 13,
 #   width    = 12,
@@ -247,7 +249,7 @@ final_plot_with_text <- final_plot_inset +
 
 # PNG
 ggsave(
-  filename = here("outputs","Fig_1", paste0("Fig_1", sample(1:10000, 1), ".png")),
+  filename = ts_here("outputs","Fig_1", paste0("Fig_1", sample(1:10000, 1), ".png")),
   plot     = final_plot_with_text,
   height   = 13,
   width    = 12,
@@ -257,7 +259,7 @@ ggsave(
 
 # PDF
 ggsave(
-  filename = here("outputs","Fig_1", paste0("Fig_1", sample(1:10000, 1), ".pdf")),
+  filename = ts_here("outputs","Fig_1", paste0("Fig_1", sample(1:10000, 1), ".pdf")),
   plot     = final_plot_with_text,
   height   = 13,
   width    = 12,

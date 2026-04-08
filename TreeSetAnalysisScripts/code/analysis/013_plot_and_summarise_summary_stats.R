@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # Script: 013_plot_and_summarise_summary_stats.R
 # Description: Reads summary statistics files and generates summary plots and tables.
 #------------------------------------------------------------------------------
@@ -53,8 +55,8 @@ HPDI <- function( samples , prob = 0.95) {
 # End Helper function
 
 # read in files
-# lf1 <- list.files(here("outputs"), pattern="summary_statsALL_2", full.names = TRUE)
-# lf2 <- list.files(here("outputs"), pattern="summary_statsALL_2", full.names = FALSE)
+# lf1 <- list.files(ts_here("outputs"), pattern="summary_statsALL_2", full.names = TRUE)
+# lf2 <- list.files(ts_here("outputs"), pattern="summary_statsALL_2", full.names = FALSE)
 # lf2 <- gsub(".csv", "", lf2)
 # lf2 <- gsub("ALL_", ";", lf2)
 # lf3 <- read.table(text=lf2, sep=";")
@@ -63,7 +65,7 @@ HPDI <- function( samples , prob = 0.95) {
 # 
 # # read in latest file
 # fil3 <- fread(lf3[lf3$V2==(sort(lf3$V2, decreasing = TRUE)[1]), "filen"]) # choose the one with the latest date
-fil3 = fread(here("outputs","All_Trees_Summary.csv"))
+fil3 = fread(ts_here("outputs","All_Trees_Summary.csv"))
 #summarise by group
 #mean
 
@@ -110,7 +112,7 @@ nd3$variable <- gsub("DRskew", "Skew in\nDiversification Rate ", nd3$variable)
 nd3$variable <- gsub("DRkurtosis", "Kurtosis in\nDiversification Rate", nd3$variable)
 
 #write summarised results
-write.csv(nd3, file = here("outputs", paste0("summary_statsMEAN_", Sys.Date(), ".csv")))
+write.csv(nd3, file = ts_here("outputs", paste0("summary_statsMEAN_", Sys.Date(), ".csv")))
 # nd3 <- fread("./summary_statsMEAN_2023-07-25.csv")
 
 #summarise by group
@@ -145,7 +147,7 @@ for (f in 3:ncol(tt4)){
 nd3 <- nd2 #merge(nd2, all1, by.x="language_group", by.y="group")
 
 #write results
-write.csv(nd3, file = here("outputs", paste0("simulated_summary_statsALL_HPDI_", Sys.Date(), ".csv")))
+write.csv(nd3, file = ts_here("outputs", paste0("simulated_summary_statsALL_HPDI_", Sys.Date(), ".csv")))
 # nd3 <- fread("./simulated_summary_statsALL_HPDI_2023-07-25.csv")
 
 # read in simulated tress and create plots
@@ -161,8 +163,8 @@ fil3a <- fil3a[order(sort(fil3a$meanDR)),]
 fil3a$type = "real"
 
 #create a single summary file countries for simulated data
-lf1 <- list.files(here("outputs"), pattern="summary_statsSIM_2", full.names = TRUE)
-lf2 <- list.files(here("outputs"), pattern="summary_statsSIM_2", full.names = FALSE)
+lf1 <- list.files(ts_here("outputs"), pattern="summary_statsSIM_2", full.names = TRUE)
+lf2 <- list.files(ts_here("outputs"), pattern="summary_statsSIM_2", full.names = FALSE)
 lf2 <- gsub(".csv", "", lf2)
 lf2 <- gsub("SIM_", ";", lf2)
 lf3 <- read.table(text=lf2, sep=";")
@@ -172,6 +174,9 @@ lf3$V2 <- as.Date(lf3$V2)
 # read in latest file
 fil3 <- fread(lf3[lf3$V2==(sort(lf3$V2, decreasing = TRUE)[1]), "filen"]) # choose the one with the latest date
 
-write.csv(fil3, file=paste(here("outputs", "summary_statsALL_", sample(1:100000, 1), ".csv")))
+write.csv(
+  fil3,
+  file = ts_here("outputs", paste0("summary_statsALL_", sample(1:100000, 1), ".csv"))
+)
 
 # End of script

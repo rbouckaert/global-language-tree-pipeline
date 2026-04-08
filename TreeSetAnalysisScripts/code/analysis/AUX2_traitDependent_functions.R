@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 
 
 #is function checks trees to see if they pass ape ultrametricity test.

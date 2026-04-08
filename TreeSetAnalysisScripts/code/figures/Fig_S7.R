@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # ------------------------------------------------------------------------------| 
 # Load necessary libraries ----
 # ------------------------------------------------------------------------------|
@@ -26,12 +28,12 @@ cell_aggregation = "mean"
 # ------------------------------------------------------------------------------|
 # Load and process EDGE data and language metadata
 # ------------------------------------------------------------------------------|
-EDGE2 <- read.csv(here("outputs","EDGEscores", "ALL_EDGE_eq.csv"), stringsAsFactors = FALSE)
+EDGE2 <- read.csv(ts_here("outputs","EDGEscores", "ALL_EDGE_eq.csv"), stringsAsFactors = FALSE)
 # Calculate DR (assuming ED is nonzero)
 EDGE2$DR <- 1 / EDGE2$ED
 
 # Load country codes and language metadata; adjust file path as needed
-res5 <- read.csv(file = here("input_data", "languages_and_dialects_geoFINALupdates6.csv"),
+res5 <- read.csv(file = ts_here("input_data", "languages_and_dialects_geoFINALupdates6.csv"),
                  stringsAsFactors = FALSE)
 # Fix glottocode if needed
 res5$glottocode[res5$glottocode == "osse1243"] <- "iron1242"
@@ -56,7 +58,7 @@ tmp <- all_names %>%
 # ------------------------------------------------------------------------------|
 # Load language spatial data and convert to sf in the chosen CRS
 # ------------------------------------------------------------------------------|
-langa <- read.csv(here("input_data", "languages_and_dialects_geoFINALupdates6.csv"),
+langa <- read.csv(ts_here("input_data", "languages_and_dialects_geoFINALupdates6.csv"),
                   stringsAsFactors = FALSE)
 langa <- langa[!is.na(langa$latitude) & !is.na(langa$longitude), ]
 
@@ -308,7 +310,7 @@ for (cell_size in c(200000, 250000, 300000, 400000)){
     
     # Save outputHow 
     ggsave(
-      here("outputs", "Fig_S7_equalcells","8April_Quantiles_WithoutMinMax",
+      ts_here("outputs", "Fig_S7_equalcells","8April_Quantiles_WithoutMinMax",
            paste0("Map_",aggregation,"_per_language_",cell_aggregation,"_per_cell_",
                   format(cell_size, scientific = FALSE),".jpg")), 
       final_plot, width = 9, height = 7.5, units = "in", dpi = 300 #original width was 10, height 8

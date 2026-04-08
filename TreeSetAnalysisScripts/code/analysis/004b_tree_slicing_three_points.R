@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # -------------------------------------------------------------------------
 # Input data:
 # - input_data/global-language-trees-6636-taxa.trees [Nexus: Source trees]
@@ -24,7 +26,7 @@ library(phytools)
 # 1) Load Trees from Nexus File -------------------------------------------
 
 # Define the path to the Nexus file
-trees_file <- here("input_data", "global-language-trees-6636-taxa.trees")
+trees_file <- ts_here("input_data", "global-language-trees-6636-taxa.trees")
 
 # Read all trees from the Nexus file
 cat("Reading trees from file:", trees_file, "\n")
@@ -66,7 +68,7 @@ for (i in seq_along(selected_trees)) {
   tree_name <- selected_names[i] 
   
   # Define output file for this tree
-  output_file <- here("outputs", "new_trees_sliced", paste0(tree_name, "_clade_counts.csv"))
+  output_file <- ts_here("outputs", "new_trees_sliced", paste0(tree_name, "_clade_counts.csv"))
   
   # Skip this tree if results already exist
   if (file.exists(output_file)) {

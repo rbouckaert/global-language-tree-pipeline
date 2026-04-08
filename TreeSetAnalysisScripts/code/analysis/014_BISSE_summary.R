@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # Script: 016_BISSE_summary.R
 # Description: Summarises and visualises BiSSE/HiSSE model results from simulation and real data.
 #------------------------------------------------------------------------------
@@ -36,10 +38,10 @@ library(here)  # for path management
 #######################################
 
 # List all BISSE run CSV files from the BISSE_runs folder
-lf1 <- list.files(here("BISSE_runs"), pattern = "ISSE_runs3.csv", full.names = TRUE)
+lf1 <- list.files(ts_here("BISSE_runs"), pattern = "ISSE_runs3.csv", full.names = TRUE)
 
 # Extract continent information from filenames
-cont1 <- gsub(paste0(here("BISSE_runs"), "/es4_tree_"), "", lf1, fixed = TRUE)
+cont1 <- gsub(paste0(ts_here("BISSE_runs"), "/es4_tree_"), "", lf1, fixed = TRUE)
 cont1 <- gsub("_BISSE_runs3.csv", "", cont1, fixed = TRUE)
 cont2 <- read.table(text = cont1, sep = "_")
 cont3 <- cont2$V4
@@ -68,14 +70,14 @@ names(dat1) <- c("tree2", "number", "xxxx", "type")
 lf3 <- cbind(lf3, dat1)
 
 # Write the combined results out to file
-fwrite(lf3, file = here("outputs", "bisse_results1.csv"))
+fwrite(lf3, file = ts_here("outputs", "bisse_results1.csv"))
 
 #######################################
 ## SECTION 4: Load Parameters & Test Types ##
 #######################################
 
 # Load parameter names object (assumed to be saved in 'xxx')
-load(here("input_data", "bisse_param_names.r"))
+load(ts_here("input_data", "bisse_param_names.r"))
 
 # Identify test types available in the data
 types <- unique(lf3$name)
@@ -98,7 +100,7 @@ DR1$variable <- gsub("EA033_Extended", "Political Complexity", DR1$variable)
 # Aggregate DR test results and write summary to CSV
 resDR <- aggregate(DR1[, c("AIC", "Parameters")], by = list(DR1$variable), mean)
 names(resDR) <- c("Variable", "Difference", "Overlap")
-write.csv(resDR, file = here("outputs", "DR_test_summary.csv"))
+write.csv(resDR, file = ts_here("outputs", "DR_test_summary.csv"))
 
 #######################################
 ## SECTION 5b: DR Test % Support     ##
@@ -126,7 +128,7 @@ counts_df <- data.frame(Variable = rownames(counts_total)[row(counts_total)],
 resDR_loc <- merge(resDR_loc, counts_df, by = c("Variable","Location"), all.x = TRUE)
 
 write.csv(resDR_loc,
-          file = here("outputs", "bisse_DR_support_by_location.csv"),
+          file = ts_here("outputs", "bisse_DR_support_by_location.csv"),
           row.names = FALSE)
 
 #######################################
@@ -152,7 +154,7 @@ bisp$param_names[bisp$param_names == "turnover0A"] <- "State 0"
 # AIC results aggregation and write to CSV
 resAIC <- aggregate(bisp$AIC, by = list(bisp$variable, bisp$name, bisp$location), mean)
 names(resAIC)[ncol(resAIC)] <- "mean_AIC"
-write.csv(resAIC, file = here("outputs", "AIC_test_summary.csv"))
+write.csv(resAIC, file = ts_here("outputs", "AIC_test_summary.csv"))
 
 #######################################
 ## SECTION 7: Parameter Comparison  ##
@@ -173,7 +175,7 @@ sd0   <- aggregate(param0$Parameters, by = list(param0$variable, param1$location
 resParam <- mean1[, c("Group.1", "Group.2")]
 resParam$zero_over_one <- mean0$x / mean1$x
 resParam$one_over_zero <- mean1$x / mean0$x
-write.csv(resParam, file = here("outputs", "bisse_parameter_differences.csv"))
+write.csv(resParam, file = ts_here("outputs", "bisse_parameter_differences.csv"))
 
 # Determine where State 1 is greater than State 0
 param1$diff <- param1$Parameters - param0$Parameters
@@ -185,7 +187,7 @@ param1$dummy <- 1
 x <- xtabs(param1$diff ~ param1$variable + param1$location)
 y <- xtabs(param1$dummy ~ param1$variable + param1$location)
 z <- x / y
-write.csv(z, file = here("outputs", "bisse_parameter_directions.csv"))
+write.csv(z, file = ts_here("outputs", "bisse_parameter_directions.csv"))
 
 #######################################
 ## SECTION 8: Diversification Analysis ##
@@ -263,7 +265,7 @@ res2  <- aggregate(bisse2$lessAIC, by = list(bisse2$variable, bisse2$location), 
 res2a <- aggregate(bisse2$dummy,   by = list(bisse2$variable, bisse2$location), sum)
 res2$prop1 <- res2$x / res2a$x
 names(res2) <- c("Variable", "Location", "Number", "Proportion")
-write.csv(res2, file = here("outputs", "bisse_null_AIC_proportions.csv"))
+write.csv(res2, file = ts_here("outputs", "bisse_null_AIC_proportions.csv"))
 
 #######################################
 ## SECTION 10: LOO Ratios + Support  ##
@@ -289,6 +291,6 @@ if (exists("resParam") && exists("resDR_loc")) {
   names(loo_numbers)[names(loo_numbers)=="one_over_zero"] <- "ratio_state1_over_state0"
 
   write.csv(loo_numbers,
-            file = here("outputs", "bisse_LOO_ratio_and_support.csv"),
+            file = ts_here("outputs", "bisse_LOO_ratio_and_support.csv"),
             row.names = FALSE)
 }

@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 library(here)
 library(ggplot2)
 library(tidyverse)
@@ -9,12 +11,12 @@ library(cowplot)
 # Extended Data Fig. 2 ------------------------------------------------------
 
 # Data Import --------------------------------------------------------------------
-fil3 = read.csv(here("outputs", "All_Trees_Summary.csv"), 
+fil3 = read.csv(ts_here("outputs", "All_Trees_Summary.csv"), 
                 stringsAsFactors = FALSE)
 fil3<-as.data.frame(fil3)
 
 # Make grouping column group2 --------------------------------------------------------------------
-grps1<-read.csv(here("input_data", "groups_table.csv"), stringsAsFactors = FALSE)
+grps1<-read.csv(ts_here("input_data", "groups_table.csv"), stringsAsFactors = FALSE)
 
 names(grps1)[3]<-"group2"
 fil3<-merge(fil3,grps1[,c("group","group2")],by="group",all.x=TRUE,all.y=FALSE)
@@ -44,7 +46,7 @@ p = ggplot(fil3[fil3$group2=="top27families",],
 
 # Save the plot as a high-quality PNG
 ggsave(
-  filename = here("outputs","Fig_S2","Fig_S2.png"), 
+  filename = ts_here("outputs","Fig_S2","Fig_S2.png"), 
   plot = p,
   width = 12, 
   height = 8, 
@@ -54,7 +56,7 @@ ggsave(
 
 # Save the plot as a high-quality PDF
 ggsave(
-  filename = here("outputs","Fig_S2","Fig_S2.pdf" ), 
+  filename = ts_here("outputs","Fig_S2","Fig_S2.pdf" ), 
   plot = p,
   width = 12,           
   height = 8, 
@@ -93,7 +95,7 @@ print(p2)
 
 # Save the plot as a high-quality PNG
 ggsave(
-  filename = here("outputs","Fig_S2","Fig_S2_viridis.png"), 
+  filename = ts_here("outputs","Fig_S2","Fig_S2_viridis.png"), 
   plot = p2,
   width = 12, 
   height = 8, 
@@ -103,7 +105,7 @@ ggsave(
 
 # Save the plot as a high-quality PNG
 ggsave(
-  filename = here("outputs","Fig_S2","Fig_S2_viridis.pdf"), 
+  filename = ts_here("outputs","Fig_S2","Fig_S2_viridis.pdf"), 
   plot = p2,
   width = 12, 
   height = 8, 

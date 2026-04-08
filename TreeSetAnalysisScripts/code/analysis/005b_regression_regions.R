@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # This script runs regression models on the global trees where kfolds are performed
 # based on the exclusion of specific macroregions
 
@@ -33,9 +35,10 @@ cat("Number of cores:", num_cores, "\n")
 
 # Set constants
 e <- simpleError("test error")
-results_folder = "regression_results_regions_fixed"
-#datasets_folder = "datasets_and_trees"
-datasets_folder = here("datasets_and_trees_fixed_raw_scaled_logged")
+results_folder = ts_here("regression_results_regions")
+datasets_folder = ts_here("datasets_and_trees")
+
+if (!dir.exists(results_folder)) dir.create(results_folder, recursive = TRUE)
 
 # cutD function
 cutD <- function(x, n) {
@@ -206,8 +209,8 @@ for (ii in 1:nrow(files1)) {
     colnames(mat) <- rownames(mat)
     mat <- as.matrix(mat[1:dim(mat)[1], 1:dim(mat)[1]])
     samp1 <- sample(1e10, 1)
-    nb2INLA(paste0(here("cl_graph_regions/cl_graph_"), samp1), nbs)
-    H <- inla.read.graph(filename = paste0(here("cl_graph_regions/cl_graph_"), samp1))
+    nb2INLA(paste0(ts_here("cl_graph_regions", "cl_graph_"), samp1), nbs)
+    H <- inla.read.graph(filename = paste0(ts_here("cl_graph_regions", "cl_graph_"), samp1))
     
     # Make tree VCV matrix ----
     phylo_covar_mat <- ape::vcv(tr1)
@@ -361,7 +364,20 @@ for (ii in 1:nrow(files1)) {
     quads2$kfold <- kfold_macroareas$macroarea[kfold_macroareas$kf==ww]
     
     # Save Prediction Summaries ----
-    write.csv(quads2, file = here(results_folder, paste0("results_",files1[ii, "uni"],"_",kfold_macroareas$macroarea[kfold_macroareas$kf==ww],"_slopes25.csv")), row.names = FALSE)
+    write.csv(
+      quads2,
+      file = file.path(
+        results_folder,
+        paste0(
+          "results_",
+          files1[ii, "uni"],
+          "_",
+          kfold_macroareas$macroarea[kfold_macroareas$kf == ww],
+          "_slopes25.csv"
+        )
+      ),
+      row.names = FALSE
+    )
     
     # Finalize Regression Results ----
     res1$n <- NA
@@ -401,9 +417,8 @@ for (ii in 1:nrow(files1)) {
   # Save Loop Results ----
   # After completing all folds, save the aggregated results to a CSV file
   print(ii)
-  write.csv(res4, file = here(results_folder, 
+  write.csv(res4, file = file.path(results_folder,
                               paste0("results_", files1[ii, "uni"], "_", typeX, "_regressions25.csv")),
             row.names = FALSE)
 
 } # End of Main Loop ----
-

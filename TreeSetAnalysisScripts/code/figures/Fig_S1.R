@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
   ################################################################################
   # Figure S1: Language Family Diversification Rates, Imbalance, and Gamma
   ################################################################################
@@ -10,7 +12,7 @@
   
   # Data Import --------------------------------------------------------------------
   # Read in summary file of posterior trees
-  fil3 = read.csv(here("outputs", "All_Trees_Summary.csv"), 
+  fil3 = read.csv(ts_here("outputs", "All_Trees_Summary.csv"), 
                   stringsAsFactors = FALSE)
 
   # Rename and reorder real data
@@ -20,8 +22,8 @@
   fil3a$type = "real"
 
   ## Simulated data summary files
-  lf1 <- list.files(here("outputs"), pattern="summary_statsSIM_2", full.names = TRUE)
-  lf2 <- list.files(here("outputs"), pattern="summary_statsSIM_2", full.names = FALSE)
+  lf1 <- list.files(ts_here("outputs"), pattern="summary_statsSIM_2", full.names = TRUE)
+  lf2 <- list.files(ts_here("outputs"), pattern="summary_statsSIM_2", full.names = FALSE)
   lf2 <- gsub(".csv", "", lf2)
   lf2 <- gsub("SIM_", ";", lf2)
   lf3 <- read.table(text=lf2, sep=";")
@@ -46,7 +48,7 @@
   fil3 <- as.data.frame(fil3)
 
   # Add grouping column
-  grps1 <- read.csv(here("input_data", "groups_table.csv"))
+  grps1 <- read.csv(ts_here("input_data", "groups_table.csv"))
   names(grps1)[3] <- "group2"
   fil3 <- merge(fil3, grps1[, c("group", "group2")], by="group", all.x=TRUE, all.y=FALSE)
 
@@ -101,7 +103,7 @@
   combined_plot <- grid.arrange(bal1, gamma1, nrow=1)
 
   # Save the combined plot
-  ggsave(filename = here("outputs","Fig_S1" ,"Fig_S1.pdf"), 
+  ggsave(filename = ts_here("outputs","Fig_S1" ,"Fig_S1.pdf"), 
         plot = combined_plot, 
         height = 5, 
         width = 12)

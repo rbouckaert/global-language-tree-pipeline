@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # Code to create results and plots for BISSE analyses/Extended Data Fig. 6
 
 library(ggplot2)
@@ -12,10 +14,10 @@ library(forcats)
 library(here)
 
 # Get bisse results data
-lf3 = read.csv(here("outputs", "bisse_results1.csv"))
+lf3 = read.csv(ts_here("outputs", "bisse_results1.csv"))
 
 # Load parameter names object called xxx
-load(here("input_data", "bisse_param_names.r"))
+load(ts_here("input_data", "bisse_param_names.r"))
 
 # What types of test
 types<-unique(lf3$name)
@@ -54,7 +56,7 @@ p1 = ggplot(DR1[DR1$Parameters==0 & DR1$variable!="Endogamous Marriage",],
 
 print(p1)
 
-ggsave(here("outputs","Fig_S5", "Fig_S5_ridges.png"), p1, height=3, width=8, dpi = 600)
+ggsave(ts_here("outputs","Fig_S5", "Fig_S5_ridges.png"), p1, height=3, width=8, dpi = 600)
 
 # Figure S6 --------------------------------------------------------------------
 # Updated code for faceted ridges
@@ -84,8 +86,8 @@ p5 <- ggplot(DR1,  # Use the full dataset, not just the subset
 
 print(p5)
 
-ggsave(here("outputs", "Fig_S6.png"), p5, height=3, width=8, dpi = 600)
-ggsave(here("outputs", "Fig_S6.pdf"), p5, height=3, width=8, dpi = 600)
+ggsave(ts_here("outputs", "Fig_S6.png"), p5, height=3, width=8, dpi = 600)
+ggsave(ts_here("outputs", "Fig_S6.pdf"), p5, height=3, width=8, dpi = 600)
 
 # Continue Data Curation --------------------------------------------------
 # Results table
@@ -197,7 +199,7 @@ hist(bisp_long6$Parameters)
 # Fig 3 Main  ------------------------------------------------------
 
 write.csv(bisp_long6,
-          file=here("outputs","BISSE_Plots3_S6_data.csv"), 
+          file=ts_here("outputs","BISSE_Plots3_S6_data.csv"), 
           row.names = FALSE)
 
 # Plot results of bisse
@@ -215,7 +217,7 @@ p3 = ggplot(data=bisp_long6[bisp_long6$Parameter!="Constant Rate" & bisp_long6$l
   scale_colour_manual(values = c("#ef8a6275","#377eb875"))#+
 #theme(legend.position = c(0.05, 0.875))
 
-ggsave(p3, filename = here("outputs", "bisse_main_figure.pdf"), width = 6, height = 4)
+ggsave(p3, filename = ts_here("outputs", "bisse_main_figure.pdf"), width = 6, height = 4)
 
 # Fig S6 Supplementary ---------------------------------------------
 ###plot results of bisse
@@ -235,8 +237,8 @@ p6 = ggplot(data=bisp_long6[bisp_long6$Parameter!="Constant Rate" & bisp_long6$l
 
 print(p6)
 
-ggsave(p6, filename = here("outputs", "Fig_S6_square.png"), width = 10, height = 10, dpi = 600)
-ggsave(p6, filename = here("outputs", "Fig_S6_narrow.pdf"), width = 5, height = 20, dpi = 600)
+ggsave(p6, filename = ts_here("outputs", "Fig_S6_square.png"), width = 10, height = 10, dpi = 600)
+ggsave(p6, filename = ts_here("outputs", "Fig_S6_narrow.pdf"), width = 5, height = 20, dpi = 600)
 
 ###comparison to NULL
 
@@ -316,4 +318,4 @@ res2<-aggregate(bisse3$dummy[bisse3$delta_AIC<=aic_diff],by=list(bisse3$variable
 res2a<-aggregate(bisse3$dummy,by=list(bisse3$variable,bisse3$location),length)
 res2$prop1<-res2$x/res2a$x
 names(res2)<-c("Variable","Location","Number","Proportion")
-write.csv(res2,file=here("outputs", "bisse_null_AIC_proportions.csv"))
+write.csv(res2,file=ts_here("outputs", "bisse_null_AIC_proportions.csv"))

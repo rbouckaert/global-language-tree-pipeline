@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # provide phylogenetic tree and dataframe with two columns: 
 # the first comprising species names, the second comprising their associated GE2 scores (between 0 and 1)
 # function returns three objects: 

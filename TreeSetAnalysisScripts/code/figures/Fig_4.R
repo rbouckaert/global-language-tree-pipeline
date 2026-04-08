@@ -1,3 +1,5 @@
+source(here::here("TreeSetAnalysisScripts", "code", "analysis", "path_utils.R"))
+
 # List of files and folders read or loaded in this script:
 # 1. langa.shp file in the input_data/langa folder
 # 2. Files in the outputs folder with names matching "NEW_EDGE_top_100"
@@ -15,13 +17,13 @@ p_load(data.table, rworldmap, rgeos, maptools, cleangeo,
 
 # Get Isolate data ------------------------------------------
 # 1. Load and summarise ED data -----------------------------------------------
-all_ed <- read.csv(here("outputs", "EDGEscores", "ALL_ED_wTREES.csv")) %>%
+all_ed <- read.csv(ts_here("outputs", "EDGEscores", "ALL_ED_wTREES.csv")) %>%
   mutate(glottocode = if_else(glottocode == "osse1243", "iron1242", glottocode)) %>%
   group_by(glottocode) %>%
   summarise(ED_mean = mean(ED), .groups = "drop")
 
 # 2. Load Glottolog 4.0 families ----------------------------------------------
-lg <- read.csv(here("outputs", "Table_S2", "languoid40.csv"))
+lg <- read.csv(ts_here("outputs", "Table_S2", "languoid40.csv"))
 
 lg = lg %>%
   transmute(
@@ -43,11 +45,11 @@ lang_ed <- all_ed %>%
   )
 
 # 4. Load threat data ----------------------------------------------------------
-threat <- read.csv(here("input_data", "processed_threat_data_frame.csv")) %>%
+threat <- read.csv(ts_here("input_data", "processed_threat_data_frame.csv")) %>%
   mutate(glottocode = if_else(glottocode == "osse1243", "iron1242", glottocode))
 
 # 5. Load top EDGE languages----------------------------------------------------
-edge_top <- read.csv(here("outputs", "EDGEscores", "NEW_EDGE_top_100.csv")) %>%
+edge_top <- read.csv(ts_here("outputs", "EDGEscores", "NEW_EDGE_top_100.csv")) %>%
   rename(glottocode = Group.1) %>%
   mutate(glottocode = if_else(glottocode == "osse1243", "iron1242", glottocode))
 
@@ -81,14 +83,14 @@ sPDF<-spTransform(sPDF2,CRS("+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +dat
 cont4 <- st_as_sf(sPDF[sPDF$NAME != "Antarctica", ])
 
 # Langauge data
-langa <- st_read(here("input_data", "langa", "langa.shp"), quiet = TRUE)
+langa <- st_read(ts_here("input_data", "langa", "langa.shp"), quiet = TRUE)
 
 # Edge data
 edge1 = table_s2
 edge1 %<>% relocate(glottocode, .before = name)
 
 #read in links to iso639
-res5 <- fread(file = here("input_data", "languages_and_dialects_geoFINALupdates6.csv"))
+res5 <- fread(file = ts_here("input_data", "languages_and_dialects_geoFINALupdates6.csv"))
 res5$`DPLACE subsistence` = res5$`DPLACE subsistence` - 1
 res5$glottocode[res5$glottocode=="osse1243"] <- "iron1242"
 
@@ -150,8 +152,8 @@ print(p)
 # 3.Threat category vs Log mean ED data ---------------------
 # -----------------------------------------------------------|
 
-all_ed = read.csv(here("outputs","EDGEscores", "ALL_ED_wTREES.csv"))
-threat = read.csv(here("input_data", "processed_threat_data_frame.csv"))
+all_ed = read.csv(ts_here("outputs","EDGEscores", "ALL_ED_wTREES.csv"))
+threat = read.csv(ts_here("input_data", "processed_threat_data_frame.csv"))
 all_ed$glottocode[all_ed$glottocode=="osse1243"] <- "iron1242"
 threat$glottocode[threat$glottocode=="osse1243"] <- "iron1242"
 names(all_ed); dim(all_ed)
@@ -228,18 +230,18 @@ final_plot <- ggdraw() +
 print(final_plot)
 
 # Save final plot
-ggsave(file = here("outputs","Fig_4", "Fig4_15Oct2025.pdf"), 
+ggsave(file = ts_here("outputs","Fig_4", "Fig4_15Oct2025.pdf"), 
        plot = final_plot, width = 8, height = 4.5, dpi = 1000)
 
-ggsave(file = here("outputs","Fig_4", "Fig4_15Oct2025.jpg"), 
+ggsave(file = ts_here("outputs","Fig_4", "Fig4_15Oct2025.jpg"), 
        plot = final_plot, width = 8, height = 4.5, dpi = 1000)
 
 
 # MODELS ---------------------------
 # LINEAR REGRESSION -----------------------------------------
 # 1.Threat category vs Log mean ED data ---------------------
-all_ed = read.csv(here("outputs","EDGEscores", "ALL_ED_wTREES.csv"))
-threat = read.csv(here("input_data", "processed_threat_data_frame.csv"))
+all_ed = read.csv(ts_here("outputs","EDGEscores", "ALL_ED_wTREES.csv"))
+threat = read.csv(ts_here("input_data", "processed_threat_data_frame.csv"))
 all_ed$glottocode[all_ed$glottocode=="osse1243"] <- "iron1242"
 threat$glottocode[threat$glottocode=="osse1243"] <- "iron1242"
 names(all_ed); dim(all_ed)
@@ -288,8 +290,8 @@ results <- tree_models %>%
   dplyr::select(tree, unstd_coef, std_coef, p_value)
 
 
-write.csv(results, here("outputs","EDGE", "ThreatStatus_vs_LogED.csv"), row.names = FALSE)
-write.csv(results, here("outputs","Fig_4", "ThreatStatus_vs_LogED.csv"), row.names = FALSE)
+write.csv(results, ts_here("outputs","EDGE", "ThreatStatus_vs_LogED.csv"), row.names = FALSE)
+write.csv(results, ts_here("outputs","Fig_4", "ThreatStatus_vs_LogED.csv"), row.names = FALSE)
 
 mean(results$unstd_coef)
 mean(results$std_coef)
@@ -306,8 +308,8 @@ library(here)
 
 # 1. Read in Data and Preprocess -----------------------------
 # Read in the ED scores and threat status data
-all_ed <- read.csv(here("EDscoresARTUR", "ALL_ED_ARTUR_wTREES.csv"))
-threat <- read.csv(here("input_data", "processed_threat_data_frame.csv"))
+all_ed <- read.csv(ts_here("EDscoresARTUR", "ALL_ED_ARTUR_wTREES.csv"))
+threat <- read.csv(ts_here("input_data", "processed_threat_data_frame.csv"))
 
 # Recode glottocode
 all_ed$glottocode[all_ed$glottocode == "osse1243"] <- "iron1242"
@@ -370,7 +372,7 @@ results <- tree_models %>%
   ) %>%
   dplyr::select(tree, coef_logED, odds_ratio, se_logED, t_value, p_value, p_value2)
 
-write.csv(results, here("outputs", "ThreatStatus_vs_logED_ordinal.csv"), row.names = FALSE)
+write.csv(results, ts_here("outputs", "ThreatStatus_vs_logED_ordinal.csv"), row.names = FALSE)
 
 
 # 4. Summarize and Interpret the Results ---------------------
