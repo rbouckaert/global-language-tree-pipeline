@@ -2,6 +2,9 @@
 
 This is a [BEAST](http://beast2.org) package to generate timing constraints based on posterior distributions of independent analyses represented by posterior tree samples.
 
+## System requirements
+
+Runs on any hardware that can run java. There are beast2 releases that have java included.
 
 ## How to build
 
@@ -9,7 +12,7 @@ Clone the project.
 
 Monos uses the following packages:
 
-* beast2
+* beast2 v2.6
 * BEASTLabs
 * Babel
 and whatever packages are required to run the input XML file (see below).
